@@ -1,0 +1,2 @@
+[env]
+AOC_DATA = { value = "data/", relative = true }
