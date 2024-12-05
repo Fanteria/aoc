@@ -1,23 +1,9 @@
-use std::io::{BufRead, BufReader, Read};
-
 use super::TaskRun;
+use crate::utils::Parser;
 
 pub struct Task02;
 
 impl Task02 {
-    fn read_lines<R: Read>(reader: R) -> Vec<Vec<usize>> {
-        let reader = BufReader::new(reader);
-        reader
-            .lines()
-            .map(|line| {
-                let line = line.unwrap();
-                line.split_whitespace()
-                    .map(|num| num.parse::<usize>().unwrap())
-                    .collect::<Vec<_>>()
-            })
-            .collect()
-    }
-
     fn is_cending<'a, I>(iter: I) -> bool
     where
         I: Iterator<Item = &'a usize> + Clone,
@@ -33,18 +19,14 @@ impl Task02 {
 }
 
 impl TaskRun for Task02 {
-    fn normal<R: Read>(reader: R) -> usize {
-        let records = Self::read_lines(reader);
-        records
-            .iter()
+    fn normal(input: &str) -> usize {
+        Parser::iter_vec::<usize>(input)
             .filter(|record| Self::is_valid(record))
             .count()
     }
 
-    fn bonus<R: Read>(reader: R) -> usize {
-        let records = Self::read_lines(reader);
-        records
-            .iter()
+    fn bonus(input: &str) -> usize {
+        Parser::iter_vec::<usize>(input)
             .filter(|record| {
                 Self::is_valid(record)
                     || ((0..record.len())
@@ -83,14 +65,14 @@ mod tests {
     #[bench]
     fn normal_bench(b: &mut Bencher) {
         let t = Task::new(2, TaskType::Normal);
-        let input = t.get_input(t.get_in_path());
-        b.iter(|| Task02::normal(input.as_bytes()))
+        let input = Task::get_input(t.get_in_path());
+        b.iter(|| Task02::normal(&input))
     }
 
     #[bench]
     fn bonus_bench(b: &mut Bencher) {
         let t = Task::new(2, TaskType::Bonus);
-        let input = t.get_input(t.get_in_path());
-        b.iter(|| Task02::bonus(input.as_bytes()))
+        let input = Task::get_input(t.get_in_path());
+        b.iter(|| Task02::bonus(&input))
     }
 }

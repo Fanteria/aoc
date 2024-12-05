@@ -1,5 +1,5 @@
 use super::TaskRun;
-use std::io::{BufRead, BufReader, Read};
+use itertools::Itertools;
 
 const XMAS: &str = "XMAS";
 const SAMX: &str = "SAMX";
@@ -65,63 +65,53 @@ impl Data {
 pub struct Task04;
 
 impl Task04 {
-    fn read<R: Read>(reader: R) -> Data {
+    fn read(input: &str) -> Data {
         Data {
-            data: BufReader::new(reader)
-                .lines()
-                .map(|l| l.unwrap().chars().collect())
-                .collect(),
+            data: input.lines().map(|l| l.to_owned()).collect(),
         }
     }
 }
 
 impl TaskRun for Task04 {
-    fn normal<R: Read>(reader: R) -> usize {
-        let d = Task04::read(reader);
-        (0..d.data.len())
-            .map(|x| {
-                (0..d.data[0].len())
-                    .flat_map(|y| {
-                        [
-                            d.check_horizonal(x, y),
-                            d.check_vertical(x, y),
-                            d.check_diagonal_right(x, y),
-                            d.check_diagonal_left(x, y),
-                        ]
-                    })
-                    .filter(|v| v.is_some())
-                    .count()
+    fn normal(input: &str) -> usize {
+        let d = Task04::read(input);
+
+        Itertools::cartesian_product(0..d.data.len(), 0..d.data[0].len())
+            .flat_map(|(x, y)| {
+                [
+                    d.check_horizonal(x, y),
+                    d.check_vertical(x, y),
+                    d.check_diagonal_right(x, y),
+                    d.check_diagonal_left(x, y),
+                ]
             })
-            .sum()
+            .filter(|v| v.is_some())
+            .count()
     }
 
-    fn bonus<R: Read>(reader: R) -> usize {
-        let d = Task04::read(reader);
-        (1..d.data.len() - 1)
-            .map(|x| {
-                (1..d.data[0].len() - 1)
-                    .filter(|y| d.data[x].chars().nth(*y).unwrap() == 'A')
-                    .filter(|y| {
-                        matches!(
-                            (
-                                d.data[x + 1].chars().nth(*y + 1).unwrap(),
-                                d.data[x - 1].chars().nth(*y - 1).unwrap(),
-                            ),
-                            ('M', 'S') | ('S', 'M')
-                        )
-                    })
-                    .filter(|y| {
-                        matches!(
-                            (
-                                d.data[x + 1].chars().nth(*y - 1).unwrap(),
-                                d.data[x - 1].chars().nth(*y + 1).unwrap(),
-                            ),
-                            ('M', 'S') | ('S', 'M')
-                        )
-                    })
-                    .count()
+    fn bonus(input: &str) -> usize {
+        let d = Task04::read(input);
+        Itertools::cartesian_product(1..d.data.len() - 1, 1..d.data[0].len() - 1)
+            .filter(|(x, y)| d.data[*x].chars().nth(*y).unwrap() == 'A')
+            .filter(|(x, y)| {
+                matches!(
+                    (
+                        d.data[*x + 1].chars().nth(*y + 1).unwrap(),
+                        d.data[*x - 1].chars().nth(*y - 1).unwrap(),
+                    ),
+                    ('M', 'S') | ('S', 'M')
+                )
             })
-            .sum()
+            .filter(|(x, y)| {
+                matches!(
+                    (
+                        d.data[x + 1].chars().nth(*y - 1).unwrap(),
+                        d.data[x - 1].chars().nth(*y + 1).unwrap(),
+                    ),
+                    ('M', 'S') | ('S', 'M')
+                )
+            })
+            .count()
     }
 }
 
@@ -154,14 +144,14 @@ mod tests {
     #[bench]
     fn normal_bench(b: &mut Bencher) {
         let t = Task::new(4, TaskType::Normal);
-        let input = t.get_input(t.get_in_path());
-        b.iter(|| Task04::normal(input.as_bytes()))
+        let input = Task::get_input(t.get_in_path());
+        b.iter(|| Task04::normal(&input))
     }
 
     #[bench]
     fn bonus_bench(b: &mut Bencher) {
         let t = Task::new(4, TaskType::Bonus);
-        let input = t.get_input(t.get_in_path());
-        b.iter(|| Task04::bonus(input.as_bytes()))
+        let input = Task::get_input(t.get_in_path());
+        b.iter(|| Task04::bonus(&input))
     }
 }

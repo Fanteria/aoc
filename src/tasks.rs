@@ -2,11 +2,13 @@ mod task_01;
 mod task_02;
 mod task_03;
 mod task_04;
+mod task_05;
 
 pub use task_01::Task01;
 pub use task_02::Task02;
 pub use task_03::Task03;
 pub use task_04::Task04;
+pub use task_05::Task05;
 
 use core::panic;
 use std::{
@@ -20,9 +22,9 @@ use std::{
 use clap::{Parser, ValueEnum};
 
 pub trait TaskRun {
-    fn normal<R: Read>(reader: R) -> usize;
+    fn normal(input: &str) -> usize;
 
-    fn bonus<R: Read>(reader: R) -> usize;
+    fn bonus(input: &str) -> usize;
 }
 
 #[derive(ValueEnum, Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -62,7 +64,7 @@ impl Task {
             self.task_type.to_string().to_lowercase(),
             file_name
         ));
-        println!("get file {:?}", file_path);
+        // println!("get file {:?}", file_path);
         if file_path.exists() {
             file_path
         } else {
@@ -97,7 +99,7 @@ impl Task {
             .expect("Out file should contain only number")
     }
 
-    pub fn get_input(&self, path: impl AsRef<Path>) -> String {
+    pub fn get_input(path: impl AsRef<Path>) -> String {
         let mut file = File::open(path.as_ref())
             .unwrap_or_else(|e| panic!("Failed to open file {:?}. Error: {e}", path.as_ref()));
         let mut ret = String::new();
@@ -107,17 +109,17 @@ impl Task {
     }
 
     pub fn run(&self, path: impl AsRef<Path>) -> usize {
-        let file = File::open(path.as_ref())
-            .unwrap_or_else(|e| panic!("Failed to open file {:?}. Error: {e}", path.as_ref()));
         match (self.task_number, &self.task_type) {
-            (1, TaskType::Normal) => Task01::normal(file),
-            (1, TaskType::Bonus) => Task01::bonus(file),
-            (2, TaskType::Normal) => Task02::normal(file),
-            (2, TaskType::Bonus) => Task02::bonus(file),
-            (3, TaskType::Normal) => Task03::normal(file),
-            (3, TaskType::Bonus) => Task03::bonus(file),
-            (4, TaskType::Normal) => Task04::normal(file),
-            (4, TaskType::Bonus) => Task04::bonus(file),
+            (1, TaskType::Normal) => Task01::normal(&Task::get_input(path)),
+            (1, TaskType::Bonus) => Task01::bonus(&Task::get_input(path)),
+            (2, TaskType::Normal) => Task02::normal(&Task::get_input(path)),
+            (2, TaskType::Bonus) => Task02::bonus(&Task::get_input(path)),
+            (3, TaskType::Normal) => Task03::normal(&Task::get_input(path)),
+            (3, TaskType::Bonus) => Task03::bonus(&Task::get_input(path)),
+            (4, TaskType::Normal) => Task04::normal(&Task::get_input(path)),
+            (4, TaskType::Bonus) => Task04::bonus(&Task::get_input(path)),
+            (5, TaskType::Normal) => Task05::normal(&Task::get_input(path)),
+            (5, TaskType::Bonus) => Task05::bonus(&Task::get_input(path)),
             _ => panic!("Task solution not implemented."),
         }
     }

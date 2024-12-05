@@ -1,30 +1,25 @@
-use std::{
-    collections::HashMap,
-    io::{BufRead, BufReader, Read},
-};
+use crate::utils::Parser;
 
 use super::TaskRun;
+use std::collections::HashMap;
 
 pub struct Task01;
 
 impl Task01 {
-    fn read_lines<R: Read>(reader: R) -> (Vec<usize>, Vec<usize>) {
-        let reader = BufReader::new(reader);
+    fn read_lines(input: &str) -> (Vec<usize>, Vec<usize>) {
         let mut left: Vec<usize> = Vec::new();
         let mut right: Vec<usize> = Vec::new();
-        for line in reader.lines() {
-            let line = line.unwrap();
-            let mut numbers = line.split_whitespace();
-            left.push(numbers.next().unwrap().parse::<usize>().unwrap());
-            right.push(numbers.next().unwrap().parse::<usize>().unwrap());
-        }
+        Parser::iter_array::<usize, 2>(input).for_each(|line| {
+            left.push(line[0]);
+            right.push(line[1]);
+        });
         (left, right)
     }
 }
 
 impl TaskRun for Task01 {
-    fn normal<R: Read>(reader: R) -> usize {
-        let (mut left, mut right) = Self::read_lines(reader);
+    fn normal(input: &str) -> usize {
+        let (mut left, mut right) = Self::read_lines(input);
         left.sort();
         right.sort();
         left.iter()
@@ -33,8 +28,8 @@ impl TaskRun for Task01 {
             .sum()
     }
 
-    fn bonus<R: Read>(reader: R) -> usize {
-        let (left, right) = Self::read_lines(reader);
+    fn bonus(input: &str) -> usize {
+        let (left, right) = Self::read_lines(input);
         let mut map: HashMap<usize, usize> = HashMap::new();
         right.into_iter().for_each(|item| {
             *map.entry(item).or_insert(0) += 1;
@@ -60,7 +55,7 @@ mod tests {
 
     #[test]
     fn read_lines() {
-        let (left, right) = Task01::read_lines(EXAMPLE.as_bytes());
+        let (left, right) = Task01::read_lines(EXAMPLE);
         assert_eq!(left, vec![3, 4, 2, 1, 3, 3]);
         assert_eq!(right, vec![4, 3, 5, 3, 9, 3]);
     }
@@ -88,14 +83,14 @@ mod tests {
     #[bench]
     fn normal_bench(b: &mut Bencher) {
         let t = Task::new(1, TaskType::Normal);
-        let input = t.get_input(t.get_in_path());
-        b.iter(|| Task01::normal(input.as_bytes()))
+        let input = Task::get_input(t.get_in_path());
+        b.iter(|| Task01::normal(&input))
     }
 
     #[bench]
     fn bonus_bench(b: &mut Bencher) {
         let t = Task::new(1, TaskType::Bonus);
-        let input = t.get_input(t.get_in_path());
-        b.iter(|| Task01::bonus(input.as_bytes()))
+        let input = Task::get_input(t.get_in_path());
+        b.iter(|| Task01::bonus(&input))
     }
 }

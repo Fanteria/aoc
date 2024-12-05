@@ -2,6 +2,9 @@
 
 extern crate test;
 
+pub mod tasks;
+pub mod utils;
+
 use std::{
     env,
     path::PathBuf,
@@ -10,8 +13,6 @@ use std::{
 };
 
 use tasks::Task;
-
-pub mod tasks;
 
 pub fn run_tasks(mut from: Task, to: Task) {
     let data_path = PathBuf::from(env::var("AOC_DATA").unwrap());

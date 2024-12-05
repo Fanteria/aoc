@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.4", features = ["derive", "wrap_help", "env"] }
 regex = "1.11"
+itertools = "0.13.0"
