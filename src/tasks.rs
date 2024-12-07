@@ -3,12 +3,16 @@ mod task_02;
 mod task_03;
 mod task_04;
 mod task_05;
+mod task_06;
+mod task_07;
 
-pub use task_01::Task01;
-pub use task_02::Task02;
-pub use task_03::Task03;
-pub use task_04::Task04;
-pub use task_05::Task05;
+use task_01::Task01;
+use task_02::Task02;
+use task_03::Task03;
+use task_04::Task04;
+use task_05::Task05;
+use task_06::Task06;
+use task_07::Task07;
 
 use core::panic;
 use std::{
@@ -120,6 +124,10 @@ impl Task {
             (4, TaskType::Bonus) => Task04::bonus(&Task::get_input(path)),
             (5, TaskType::Normal) => Task05::normal(&Task::get_input(path)),
             (5, TaskType::Bonus) => Task05::bonus(&Task::get_input(path)),
+            (6, TaskType::Normal) => Task06::normal(&Task::get_input(path)),
+            (6, TaskType::Bonus) => Task06::bonus(&Task::get_input(path)),
+            (7, TaskType::Normal) => Task07::normal(&Task::get_input(path)),
+            (7, TaskType::Bonus) => Task07::bonus(&Task::get_input(path)),
             _ => panic!("Task solution not implemented."),
         }
     }
