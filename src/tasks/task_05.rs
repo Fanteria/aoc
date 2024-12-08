@@ -12,7 +12,7 @@ use std::{
 pub struct Task05;
 
 impl Task05 {
-    fn read<'a, T>(input: &'a str) -> (HashMap<T, HashSet<T>>, impl Iterator<Item = Vec<T>> + 'a)
+    fn read<T>(input: &str) -> (HashMap<T, HashSet<T>>, impl Iterator<Item = Vec<T>> + '_)
     where
         T: FromStr + std::cmp::Eq + Hash + Copy,
         <T as FromStr>::Err: Debug,

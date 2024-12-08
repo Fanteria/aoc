@@ -1,8 +1,10 @@
 mod direction;
 mod point;
+mod path;
 
 pub use direction::Direction;
 pub use point::Point;
+pub use path::Path;
 
 use point::new_point;
 use std::{fmt::Display, str::FromStr};

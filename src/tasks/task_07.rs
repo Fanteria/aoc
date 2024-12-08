@@ -1,12 +1,10 @@
-use crate::utils::grid::{Direction, Grid, Point};
-use rayon::prelude::*;
-
 use super::TaskRun;
+use rayon::prelude::*;
 
 pub struct Task07;
 
 impl Task07 {
-    fn read<'a>(input: &'a str) -> impl Iterator<Item = (usize, Vec<usize>)> + 'a {
+    fn read(input: &str) -> impl Iterator<Item = (usize, Vec<usize>)> + '_ {
         input.lines().map(|line| {
             let (left, right) = line.split_once(':').unwrap();
             (
@@ -48,14 +46,14 @@ impl TaskRun for Task07 {
         fn evaluate(numbers: &[usize], act: usize, index: usize, expected: usize) -> bool {
             if index == numbers.len() {
                 act == expected
-            } else if evaluate(numbers, act + numbers[index], index + 1, expected) {
-                true
-            } else if evaluate(numbers, act * numbers[index], index + 1, expected) {
+            } else if evaluate(numbers, act + numbers[index], index + 1, expected)
+                || evaluate(numbers, act * numbers[index], index + 1, expected)
+            {
                 true
             } else {
                 evaluate(
                     numbers,
-                    (act * (10 as usize).pow(numbers[index].checked_ilog10().unwrap_or(0) + 1))
+                    (act * 10_usize.pow(numbers[index].checked_ilog10().unwrap_or(0) + 1))
                         + numbers[index],
                     index + 1,
                     expected,

@@ -1,11 +1,11 @@
-use super::{Direction, Grid};
+use super::{Direction, Grid, Path};
 
 /// Can construct invalid `Point`
 pub fn new_point(x: usize, y: usize) -> Point {
     Point { x, y }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Point {
     x: usize,
     y: usize,
@@ -75,6 +75,20 @@ impl Point {
         } else {
             None
         }
+    }
+
+    pub fn move_along_path<T>(&self, path: &Path, grid: &Grid<T>) -> Option<Self> {
+        let x = if path.x < 0 {
+            self.x.checked_sub((-path.x) as usize)?
+        } else {
+            self.x.checked_add(path.x as usize)?
+        };
+        let y = if path.y < 0 {
+            self.y.checked_sub((-path.y) as usize)?
+        } else {
+            self.y.checked_add(path.y as usize)?
+        };
+        Self::new(x, y, grid)
     }
 
     pub fn coordinaes(&self) -> (usize, usize) {

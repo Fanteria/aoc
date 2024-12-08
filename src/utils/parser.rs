@@ -4,8 +4,7 @@ pub struct Parser;
 
 impl Parser {
     #[inline]
-    #[must_use]
-    pub fn iter_vec<'a, T>(lines: &'a str) -> impl Iterator<Item = Vec<T>> + 'a
+    pub fn iter_vec<T>(lines: &str) -> impl Iterator<Item = Vec<T>> + '_
     where
         T: FromStr,
         <T as FromStr>::Err: Debug,
@@ -18,8 +17,7 @@ impl Parser {
     }
 
     #[inline]
-    #[must_use]
-    pub fn iter_array<'a, T, const N: usize>(lines: &'a str) -> impl Iterator<Item = [T; N]> + 'a
+    pub fn iter_array<T, const N: usize>(lines: &str) -> impl Iterator<Item = [T; N]> + '_
     where
         T: FromStr,
         <T as FromStr>::Err: Debug,
@@ -34,7 +32,6 @@ impl Parser {
     }
 
     #[inline]
-    #[must_use]
     pub fn iter_vec_sep<'a, T>(lines: &'a str, sep: &'a str) -> impl Iterator<Item = Vec<T>> + 'a
     where
         T: FromStr,
@@ -48,7 +45,6 @@ impl Parser {
     }
 
     #[inline]
-    #[must_use]
     pub fn iter_array_sep<'a, T, const N: usize>(lines: &'a str, sep: &'a str) -> impl Iterator<Item = [T; N]> + 'a
     where
         T: FromStr,

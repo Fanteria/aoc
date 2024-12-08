@@ -5,6 +5,7 @@ mod task_04;
 mod task_05;
 mod task_06;
 mod task_07;
+mod task_08;
 
 use task_01::Task01;
 use task_02::Task02;
@@ -13,6 +14,7 @@ use task_04::Task04;
 use task_05::Task05;
 use task_06::Task06;
 use task_07::Task07;
+use task_08::Task08;
 
 use core::panic;
 use std::{
@@ -80,8 +82,16 @@ impl Task {
         self.get_file("example_in")
     }
 
+    pub fn get_custom_example_in_path(&self, name: &str) -> PathBuf {
+        self.get_file(&format!("example_{name}_in"))
+    }
+
     pub fn get_example_out_path(&self) -> PathBuf {
         self.get_file("example_out")
+    }
+
+    pub fn get_custom_example_out_path(&self, name: &str) -> PathBuf {
+        self.get_file(&format!("example_{name}_out"))
     }
 
     pub fn get_in_path(&self) -> PathBuf {
@@ -128,6 +138,8 @@ impl Task {
             (6, TaskType::Bonus) => Task06::bonus(&Task::get_input(path)),
             (7, TaskType::Normal) => Task07::normal(&Task::get_input(path)),
             (7, TaskType::Bonus) => Task07::bonus(&Task::get_input(path)),
+            (8, TaskType::Normal) => Task08::normal(&Task::get_input(path)),
+            (8, TaskType::Bonus) => Task08::bonus(&Task::get_input(path)),
             _ => panic!("Task solution not implemented."),
         }
     }
