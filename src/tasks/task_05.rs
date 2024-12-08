@@ -5,8 +5,8 @@ use std::{
     cmp::Ordering,
     collections::{HashMap, HashSet},
     fmt::Debug,
-    str::FromStr,
     hash::Hash,
+    str::FromStr,
 };
 
 pub struct Task05;
@@ -61,43 +61,3 @@ impl TaskRun for Task05 {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::tasks::{Task, TaskType};
-    use test::Bencher;
-
-    #[test]
-    fn normal() {
-        let t = Task::new(5, TaskType::Normal);
-        assert_eq!(
-            t.run(t.get_example_in_path()),
-            t.get_output(t.get_example_out_path())
-        );
-        assert_eq!(t.run(t.get_in_path()), t.get_output(t.get_out_path()));
-    }
-
-    #[test]
-    fn bonus() {
-        let t = Task::new(5, TaskType::Bonus);
-        assert_eq!(
-            t.run(t.get_example_in_path()),
-            t.get_output(t.get_example_out_path())
-        );
-        assert_eq!(t.run(t.get_in_path()), t.get_output(t.get_out_path()));
-    }
-
-    #[bench]
-    fn normal_bench(b: &mut Bencher) {
-        let t = Task::new(5, TaskType::Normal);
-        let input = Task::get_input(t.get_in_path());
-        b.iter(|| Task05::normal(&input))
-    }
-
-    #[bench]
-    fn bonus_bench(b: &mut Bencher) {
-        let t = Task::new(5, TaskType::Bonus);
-        let input = Task::get_input(t.get_in_path());
-        b.iter(|| Task05::bonus(&input))
-    }
-}

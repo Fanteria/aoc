@@ -2,6 +2,7 @@
 
 extern crate test;
 
+pub mod files;
 pub mod tasks;
 pub mod utils;
 
@@ -15,39 +16,27 @@ use std::{
 use tasks::Task;
 
 pub fn run_tasks(mut from: Task, to: Task) {
-    let data_path = PathBuf::from(env::var("AOC_DATA").unwrap());
-    loop {
+    let files = files::Files::from_env();
+    while from != to {
         println!(
-            "{}: {}",
-            from,
-            from.run(
-                data_path
-                    .join(format!("{:0>2}", from.task_number))
-                    .join("in.txt")
-            )
+            "{from}: {}",
+            from.run(&files.get_input(files::FilesType::Task, &from))
         );
-
-        if from == to {
-            break;
-        }
         from = from.next()
     }
 }
 
-pub fn mesure_tasks(from: Task, to: Task) {
-    let mut task = from.clone();
-    let data_path = PathBuf::from(env::var("AOC_DATA").unwrap());
+pub fn mesure_tasks(mut from: Task, to: Task) {
+    let files = files::Files::new(PathBuf::from(env::var("AOC_DATA").unwrap()));
     let mut threads: Vec<JoinHandle<()>> = Vec::new();
     let now = Instant::now();
-    while task != to {
-        let path = data_path
-            .join(format!("{:0>2}", from.task_number))
-            .join("in.txt");
+    while from != to {
         let thread_task = from.clone();
+        let input = files.get_input(files::FilesType::Task, &thread_task);
         threads.push(thread::spawn(move || {
-            thread_task.run(path);
+            thread_task.run(&input);
         }));
-        task = task.next()
+        from = from.next()
     }
     for thread in threads {
         thread.join().unwrap()
