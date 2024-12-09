@@ -1,4 +1,4 @@
-mod y2024;
+mod year2024;
 
 use clap::{Parser, ValueEnum};
 use std::fmt::Display;
@@ -47,8 +47,8 @@ impl Task {
 
     pub fn run(&self, input: &str) -> usize {
         match self.task_type {
-            TaskType::Normal => y2024::TASKS_NORMAL[(self.task_number - 1) as usize](input),
-            TaskType::Bonus => y2024::TASKS_BONUS[(self.task_number - 1) as usize](input),
+            TaskType::Normal => year2024::TASKS_NORMAL[(self.task_number - 1) as usize](input),
+            TaskType::Bonus => year2024::TASKS_BONUS[(self.task_number - 1) as usize](input),
         }
     }
 
