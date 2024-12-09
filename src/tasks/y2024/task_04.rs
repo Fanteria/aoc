@@ -1,4 +1,4 @@
-use super::TaskRun;
+use crate::tasks::TaskRun;
 use itertools::Itertools;
 
 const XMAS: &str = "XMAS";

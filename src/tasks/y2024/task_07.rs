@@ -1,4 +1,4 @@
-use super::TaskRun;
+use crate::tasks::TaskRun;
 use rayon::prelude::*;
 
 pub struct Task07;
@@ -73,4 +73,3 @@ impl TaskRun for Task07 {
             .sum()
     }
 }
-

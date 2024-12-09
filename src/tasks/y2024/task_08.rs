@@ -1,4 +1,4 @@
-use super::TaskRun;
+use crate::tasks::TaskRun;
 use crate::utils::grid::{Grid, Path, Point};
 use itertools::Itertools;
 use std::{
@@ -55,4 +55,3 @@ impl TaskRun for Task08 {
             .len()
     }
 }
-

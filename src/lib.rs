@@ -1,7 +1,3 @@
-#![feature(test)]
-
-extern crate test;
-
 pub mod files;
 pub mod tasks;
 pub mod utils;

@@ -1,9 +1,7 @@
-use std::{fmt::Display, str::FromStr};
-
+use crate::tasks::TaskRun;
 use crate::utils::grid::{Direction, Grid, Point};
 use rayon::prelude::*;
-
-use super::TaskRun;
+use std::{fmt::Display, str::FromStr};
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum PointState {
@@ -162,4 +160,3 @@ impl TaskRun for Task06 {
             .count()
     }
 }
-

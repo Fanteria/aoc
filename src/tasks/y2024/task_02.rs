@@ -1,5 +1,4 @@
-use super::TaskRun;
-use crate::utils::Parser;
+use crate::{tasks::TaskRun, utils::Parser};
 
 pub struct Task02;
 

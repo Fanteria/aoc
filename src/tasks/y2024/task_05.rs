@@ -1,6 +1,5 @@
+use crate::tasks::TaskRun;
 use crate::utils::Parser;
-
-use super::TaskRun;
 use std::{
     cmp::Ordering,
     collections::{HashMap, HashSet},
@@ -60,4 +59,3 @@ impl TaskRun for Task05 {
             .sum()
     }
 }
-

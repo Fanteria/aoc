@@ -1,4 +1,4 @@
-use super::TaskRun;
+use crate::tasks::TaskRun;
 use crate::utils::Parser;
 use std::collections::HashMap;
 
