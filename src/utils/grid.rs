@@ -1,10 +1,10 @@
 mod direction;
-mod point;
 mod path;
+mod point;
 
 pub use direction::Direction;
-pub use point::Point;
 pub use path::Path;
+pub use point::Point;
 
 use point::new_point;
 use std::{fmt::Display, str::FromStr};
@@ -98,6 +98,23 @@ impl<T> Grid<T> {
         let (x, y) = point.coordinaes();
         self.get_mut(x, y).unwrap()
     }
+
+    pub fn from_str_by(s: &str, f: impl Fn(char) -> T) -> Self {
+        let mut height = 0;
+        let data = s
+            .trim()
+            .lines()
+            .flat_map(|line| {
+                height += 1;
+                line.chars().map(|c| f(c)).collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
+        Self {
+            width: data.len() / height,
+            height,
+            data,
+        }
+    }
 }
 
 impl<T> Display for Grid<T>
@@ -107,7 +124,7 @@ where
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.lines().try_for_each(|line| {
             line.iter()
-                .try_for_each(|item| write!(f, "{}", item))
+                .try_for_each(|item| write!(f, "{} ", item))
                 .and_then(|_| writeln!(f))
         })
     }
@@ -121,19 +138,6 @@ where
     type Err = i32;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut height = 0;
-        let data = s
-            .trim()
-            .lines()
-            .flat_map(|line| {
-                height += 1;
-                line.chars().map(|c| c.into()).collect::<Vec<_>>()
-            })
-            .collect::<Vec<_>>();
-        Ok(Grid {
-            width: data.len() / height,
-            height,
-            data,
-        })
+        Ok(Self::from_str_by(s, |c| c.into()))
     }
 }

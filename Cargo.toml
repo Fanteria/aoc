@@ -11,3 +11,7 @@ regex = "1.11"
 itertools = "0.13"
 rayon = "1.10"
 paste = "1.0"
+
+[profile.profiling]
+inherits = "release"
+debug = true
