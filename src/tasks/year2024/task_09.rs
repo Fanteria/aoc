@@ -1,8 +1,57 @@
-use std::iter;
+use std::{fmt::Display, iter};
 
 use crate::tasks::TaskRun;
 
 pub struct Task09;
+
+#[derive(Debug, Clone)]
+pub struct Disk {
+    blocks: Vec<File>,
+    spaces: [Vec<Space>; 10], // usize is index in `blocks`
+}
+
+impl Display for Disk {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut sorted = self
+            .blocks
+            .iter()
+            .map(|b| (None, Some(b)))
+            .chain(
+                self.spaces
+                    .iter()
+                    .flat_map(|v| v.iter())
+                    .map(|s| (Some(s), None)),
+            )
+            .map(|d| match d {
+                (None, Some(b)) => (b.start_index, d),
+                (Some(s), None) => (s.start_index, d),
+                _ => unreachable!(),
+            })
+            .collect::<Vec<_>>();
+        sorted.sort_by(|a, b| a.0.cmp(&b.0));
+        sorted
+            .iter()
+            .map(|(_, d)| match d {
+                (None, Some(b)) => write!(f, "{}", format!("{}", b.id).repeat(b.size)),
+                (Some(s), None) => write!(f, "{}", ".".repeat(s.size)),
+                _ => unreachable!(),
+            })
+            .collect()
+    }
+}
+
+#[derive(Debug, Clone)]
+struct File {
+    id: usize,
+    size: usize,
+    start_index: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct Space {
+    size: usize,
+    start_index: usize,
+}
 
 impl Task09 {
     fn normal_read(input: &str) -> Vec<Option<usize>> {
@@ -37,44 +86,64 @@ impl Task09 {
         vec
     }
 
-    fn bonus_read(input: &str) -> Vec<(Option<usize>, u32)> {
+    fn bonus_read(input: &str) -> Disk {
+        let mut spaces = std::array::from_fn(|_| Vec::new());
+        let mut blocks = Vec::new();
+        let mut start_index = 0;
         input
             .trim()
             .chars()
-            .map(|c| c.to_digit(10).unwrap())
+            .map(|c| c.to_digit(10).unwrap() as usize)
             .enumerate()
-            .flat_map(|(i, num)| {
-                if i % 2 == 0 {
-                    iter::repeat((Some(i / 2), num)).take(num as usize)
+            .for_each(|(i, size)| {
+                let block = if i % 2 == 0 {
+                    blocks.push(File {
+                        id: i / 2,
+                        size,
+                        start_index,
+                    })
                 } else {
-                    iter::repeat((None, num)).take(num as usize)
-                }
-            })
-            .collect()
+                    spaces[size].push(Space { size, start_index })
+                };
+                start_index += size;
+                block
+            });
+        Disk { blocks, spaces }
     }
 
-    fn bonus_sort(mut vec: Vec<(Option<usize>, u32)>) -> Vec<(Option<usize>, u32)> {
-        let mut i = vec.len();
+    fn bonus_sort(mut disk: Disk) -> Disk {
+        let mut i = disk.blocks.len();
         while i > 0 {
             i -= 1;
-            if let (Some(num), size) = vec[i] {
-                if let Some(j) = vec[0..i]
-                    .iter()
-                    .position(|(item, space_size)| item.is_none() && size <= *space_size)
-                {
-                    let space_size = vec[j].1;
-                    for k in 0..size as usize {
-                        vec[j + k] = (Some(num), size);
-                        vec[i - k] = (None, 0);
-                    }
-                    let new_size = space_size - size;
-                    for k in 0..new_size as usize {
-                        vec[j + (size as usize) + k] = (None, new_size);
-                    }
-                }
+            if let Some((j, k, _)) = disk
+                .spaces
+                .iter()
+                .enumerate()
+                .skip(disk.blocks[i].size)
+                .filter_map(|(j, v)| {
+                    Some((
+                        j,
+                        v.iter()
+                            .enumerate()
+                            .filter(|(_, s)| s.start_index < disk.blocks[i].start_index)
+                            .min_by(|a, b| a.1.start_index.cmp(&b.1.start_index))?,
+                    ))
+                })
+                .map(|(j, (k, w))| (j, k, w))
+                .min_by(|a, b| a.2.start_index.cmp(&b.2.start_index))
+            {
+                let mut space = disk.spaces[j].remove(k);
+                disk.spaces[disk.blocks[i].size].push(Space {
+                    size: disk.blocks[i].size,
+                    start_index: disk.blocks[i].start_index,
+                });
+                disk.blocks[i].start_index = space.start_index;
+                space.start_index += disk.blocks[i].size;
+                space.size -= disk.blocks[i].size;
+                disk.spaces[space.size].push(space);
             }
         }
-        vec
+        disk
     }
 
     fn check_sum<T>(vec: &Vec<T>, f: impl Fn(&T) -> &Option<usize>) -> usize {
@@ -91,7 +160,15 @@ impl TaskRun for Task09 {
     }
 
     fn bonus(input: &str) -> usize {
-        Self::check_sum(&Self::bonus_sort(Self::bonus_read(input)), |(num, _)| num)
+        Self::bonus_sort(Self::bonus_read(input))
+            .blocks
+            .iter()
+            .map(|b| {
+                (b.start_index..b.start_index + b.size)
+                    .map(|index| index * b.id)
+                    .sum::<usize>()
+            })
+            .sum()
     }
 }
 
@@ -115,15 +192,6 @@ mod tests {
         assert_eq!(
             &s(Task09::normal_sort(Task09::normal_read("12321"))),
             "02111...."
-        );
-    }
-
-    #[test]
-    fn bonus() {
-        let s = |v| to_string(v, |(num, _)| num);
-        assert_eq!(
-            &s(Task09::bonus_sort(Task09::bonus_read("12321"))),
-            "02.111..."
         );
     }
 }
