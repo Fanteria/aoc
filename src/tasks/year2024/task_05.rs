@@ -1,8 +1,8 @@
 use crate::tasks::TaskRun;
 use crate::utils::Parser;
+use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 use std::{
     cmp::Ordering,
-    collections::{HashMap, HashSet},
     fmt::Debug,
     hash::Hash,
     str::FromStr,

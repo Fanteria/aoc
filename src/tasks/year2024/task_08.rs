@@ -1,10 +1,8 @@
 use crate::tasks::TaskRun;
 use crate::utils::grid::{Grid, Path, Point};
+use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 use itertools::Itertools;
-use std::{
-    collections::{HashMap, HashSet},
-    str::FromStr,
-};
+use std::str::FromStr;
 
 pub struct Task08;
 

@@ -1,6 +1,6 @@
 use crate::tasks::TaskRun;
 use crate::utils::Parser;
-use std::collections::HashMap;
+use ahash::AHashMap as HashMap;
 
 pub struct Task01;
 

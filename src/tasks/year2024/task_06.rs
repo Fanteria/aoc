@@ -1,6 +1,7 @@
 use crate::tasks::TaskRun;
 use crate::utils::grid::{Direction, Grid, Point};
 use rayon::prelude::*;
+use ahash::AHashMap as HashMap;
 use std::{fmt::Display, str::FromStr};
 
 #[derive(PartialEq, Eq, Clone, Copy)]
@@ -35,47 +36,6 @@ impl Display for PointState {
     }
 }
 
-const INITIAL_POINT_HISTORY: PointHistory = PointHistory::Visited([true, false, false, false]);
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum PointHistory {
-    Barrier,
-    Empty,
-    // [Up, Down, Left, Right]
-    Visited([bool; 4]),
-}
-
-impl From<char> for PointHistory {
-    fn from(value: char) -> Self {
-        match value {
-            '#' => PointHistory::Barrier,
-            '.' => PointHistory::Empty,
-            '^' => INITIAL_POINT_HISTORY,
-            _ => panic!("Unknown tile"),
-        }
-    }
-}
-
-impl Display for PointHistory {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                PointHistory::Barrier => '#',
-                PointHistory::Empty => '.',
-                PointHistory::Visited([true, false, false, false]) => '^',
-                PointHistory::Visited([false, true, false, false]) => 'v',
-                PointHistory::Visited([false, false, true, false]) => '<',
-                PointHistory::Visited([false, false, false, true]) => '>',
-                PointHistory::Visited([true, true, false, false]) => '|',
-                PointHistory::Visited([false, false, true, true]) => '-',
-                PointHistory::Visited([true, true, true, true]) => '+',
-                _ => '?',
-            }
-        )
-    }
-}
-
 pub struct Task06;
 
 impl Task06 {
@@ -96,37 +56,29 @@ impl Task06 {
         grid
     }
 
-    fn is_cycle(mut grid: Grid<PointHistory>, start: Point) -> bool {
+    fn is_cycle(grid: &Grid<PointState>, start: Point) -> bool {
         let mut point = start;
         let mut direction = Direction::Up;
+        let mut hitted_barriers: HashMap<Point, [bool; 4]> = HashMap::new();
 
         while let Some(next_point) = point.adjacent(direction, &grid) {
-            match grid.get_at_mut(&next_point) {
-                PointHistory::Barrier => direction = direction.clockwise(2),
-                PointHistory::Empty => {
-                    point = next_point;
-                    *grid.get_at_mut(&point) = PointHistory::Visited(match direction {
-                        Direction::Up => [true, false, false, false],
-                        Direction::Down => [false, true, false, false],
-                        Direction::Left => [false, false, true, false],
-                        Direction::Right => [false, false, false, true],
-                        _ => unreachable!(),
-                    })
-                }
-                PointHistory::Visited(history) => {
-                    point = next_point;
+            match grid.get_at(&next_point) {
+                PointState::Barrier => {
+                    let directions = hitted_barriers.entry(next_point).or_default();
                     match direction {
-                        Direction::Up if history[0] => return true,
-                        Direction::Up => history[0] = true,
-                        Direction::Down if history[1] => return true,
-                        Direction::Down => history[1] = true,
-                        Direction::Left if history[2] => return true,
-                        Direction::Left => history[2] = true,
-                        Direction::Right if history[3] => return true,
-                        Direction::Right => history[3] = true,
+                        Direction::Up if directions[0] => return true,
+                        Direction::Up => directions[0] = true,
+                        Direction::Right if directions[1] => return true,
+                        Direction::Right => directions[1] = true,
+                        Direction::Down if directions[2] => return true,
+                        Direction::Down => directions[2] = true,
+                        Direction::Left if directions[3] => return true,
+                        Direction::Left => directions[3] = true,
                         _ => unreachable!(),
                     };
+                    direction = direction.clockwise(2)
                 }
+                _ =>point = next_point, 
             };
         }
         false
@@ -143,19 +95,18 @@ impl TaskRun for Task06 {
     }
 
     fn bonus(input: &str) -> usize {
-        let original_grid = Grid::<PointHistory>::from_str(input).unwrap();
-        let start = original_grid.find(&INITIAL_POINT_HISTORY).unwrap();
-
-        let mut grid = Self::guard_travel(Grid::<PointState>::from_str(input).unwrap());
+        let grid = Grid::<PointState>::from_str(input).unwrap();
+        let start = grid.find(&PointState::Visited).unwrap();
+        let mut grid = Self::guard_travel(grid);
         *grid.get_at_mut(&start) = PointState::Empty;
 
         grid.items_with_points()
             .filter(|(_, item)| **item == PointState::Visited)
             .par_bridge()
             .filter(|(point, _)| {
-                let mut grid = original_grid.clone();
-                *grid.get_at_mut(point) = PointHistory::Barrier;
-                Self::is_cycle(grid, start.clone())
+                let mut grid = grid.clone();
+                *grid.get_at_mut(point) = PointState::Barrier;
+                Self::is_cycle(&grid, start.clone())
             })
             .count()
     }
