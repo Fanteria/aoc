@@ -95,6 +95,14 @@ impl Point {
         (self.x, self.y)
     }
 
+    pub fn get_x(&self) -> usize {
+        self.x
+    }
+
+    pub fn get_y(&self) -> usize {
+        self.y
+    }
+
     pub fn find<T>(grid: &Grid<T>, to_find: &T) -> Option<Self>
     where
         T: Eq,
