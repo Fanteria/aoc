@@ -2,7 +2,8 @@ use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Grid, Point},
 };
-use std::{collections::HashSet, ops::AddAssign, str::FromStr};
+use std::{ops::AddAssign, str::FromStr};
+use ahash::AHashSet as HashSet;
 
 pub struct Task12;
 
@@ -58,7 +59,7 @@ where
     grid.items_with_points()
         .filter_map(|(point, _)| {
             if !visited.contains(&point) {
-                let garden = dfss(&point, grid, &mut visited, f);
+                let garden = dfs(&point, grid, &mut visited, f);
                 Some(garden)
             } else {
                 None
@@ -67,7 +68,7 @@ where
         .collect()
 }
 
-fn dfss<G>(
+fn dfs<G>(
     point: &Point,
     grid: &Grid<char>,
     visited: &mut HashSet<Point>,
@@ -82,11 +83,7 @@ where
         |i| match point.adjacent(Direction::Up.clockwise(i), grid) {
             Some(up) if grid.get_at(&up) != grid.get_at(point) => add_fence(&mut garden, point),
             Some(up) if !visited.contains(&up) => {
-                // println!(
-                //     "Act: {point:?}, direction {:?} goes to {up:?}",
-                //     Direction::Up.clockwise(i)
-                // );
-                garden += dfss(&up, grid, visited, add_fence);
+                garden += dfs(&up, grid, visited, add_fence);
             }
             Some(up) if visited.contains(&up) => {}
             Some(_) => {
@@ -108,7 +105,6 @@ impl TaskRun for Task12 {
     }
 
     fn bonus(input: &str) -> usize {
-        println!("---------------------------------------------------");
         let grid = Grid::<char>::from_str(input).unwrap();
         walkthrough_gardens::<GardenFenceDisard>(&grid, &|garden, point| {
             garden.points.insert(point.clone());
@@ -126,7 +122,6 @@ impl TaskRun for Task12 {
                         (Some(p), _) if g.points.contains(&p) => false,
                         (_, Some(p)) if g.points.contains(&p) => false,
                         _ => {
-                            println!("{point:?} out true for direction {direction:?}");
                             count += 1;
                             true
                         }
@@ -139,7 +134,6 @@ impl TaskRun for Task12 {
                             (Some(base), Some(diagonal))
                                 if !g.points.contains(&base) && g.points.contains(&diagonal) =>
                             {
-                                println!("{point:?} in true for direction {direction:?}");
                                 count += 1;
                             }
                             _ => {}
@@ -147,11 +141,6 @@ impl TaskRun for Task12 {
                     }
                 })
             });
-            println!(
-                "{} count: {}",
-                grid.get_at(g.points.iter().next().unwrap()),
-                count
-            );
             count * g.points.len()
         })
         .sum()
@@ -168,19 +157,17 @@ mod tests {
         let mut visited: HashSet<Point> = HashSet::new();
         let grid = Grid::<char>::from_str(INPUT1).unwrap();
         let point = Point::new(0, 0, &grid).unwrap();
-        let garden = dfss::<Garden>(&point, &grid, &mut visited, &|garden, _| garden.fence += 1);
+        let garden = dfs::<Garden>(&point, &grid, &mut visited, &|garden, _| garden.fence += 1);
         assert_eq!(garden.area.len(), 4);
         assert_eq!(garden.fence, 8);
-        println!("{visited:?}");
 
         const INPUT2: &str = "AAAA\nBBCC";
         let mut visited: HashSet<Point> = HashSet::new();
         let grid = Grid::<char>::from_str(INPUT2).unwrap();
         let point = Point::new(0, 0, &grid).unwrap();
-        let garden = dfss::<Garden>(&point, &grid, &mut visited, &|garden, _| garden.fence += 1);
+        let garden = dfs::<Garden>(&point, &grid, &mut visited, &|garden, _| garden.fence += 1);
         assert_eq!(garden.area.len(), 4);
         assert_eq!(garden.fence, 10);
-        println!("{visited:?}");
     }
 
     #[test]
