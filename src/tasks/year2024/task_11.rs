@@ -49,5 +49,5 @@ fn calculate_lengths(num: u64, times: u64) -> usize {
         });
         map = new_map;
     }
-    map.iter().map(|(_, times)| times).sum()
+    map.values().sum()
 }

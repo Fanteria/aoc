@@ -79,7 +79,7 @@ where
     visited.insert(point.clone());
     let mut garden = G::from(point.clone());
     (0..8).step_by(2).for_each(
-        |i| match point.adjacent(Direction::Up.clockwise(i), &grid) {
+        |i| match point.adjacent(Direction::Up.clockwise(i), grid) {
             Some(up) if grid.get_at(&up) != grid.get_at(point) => add_fence(&mut garden, point),
             Some(up) if !visited.contains(&up) => {
                 // println!(
@@ -118,7 +118,6 @@ impl TaskRun for Task12 {
             let mut count = 0;
             g.points.iter().for_each(|point| {
                 Direction::Up.iter().step_by(2).for_each(|direction| {
-                    let val = grid.get_at(point);
                     // check outer corners
                     if !match (
                         point.adjacent(direction, &grid),

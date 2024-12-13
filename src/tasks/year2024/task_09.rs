@@ -29,14 +29,11 @@ impl Display for Disk {
             })
             .collect::<Vec<_>>();
         sorted.sort_by(|a, b| a.0.cmp(&b.0));
-        sorted
-            .iter()
-            .map(|(_, d)| match d {
-                (None, Some(b)) => write!(f, "{}", format!("{}", b.id).repeat(b.size)),
-                (Some(s), None) => write!(f, "{}", ".".repeat(s.size)),
-                _ => unreachable!(),
-            })
-            .collect()
+        sorted.iter().try_for_each(|(_, d)| match d {
+            (None, Some(b)) => write!(f, "{}", format!("{}", b.id).repeat(b.size)),
+            (Some(s), None) => write!(f, "{}", ".".repeat(s.size)),
+            _ => unreachable!(),
+        })
     }
 }
 
@@ -96,7 +93,7 @@ impl Task09 {
             .map(|c| c.to_digit(10).unwrap() as usize)
             .enumerate()
             .for_each(|(i, size)| {
-                let block = if i % 2 == 0 {
+                if i % 2 == 0 {
                     blocks.push(File {
                         id: i / 2,
                         size,
@@ -106,7 +103,6 @@ impl Task09 {
                     spaces[size].push(Space { size, start_index })
                 };
                 start_index += size;
-                block
             });
         Disk { blocks, spaces }
     }
@@ -146,10 +142,10 @@ impl Task09 {
         disk
     }
 
-    fn check_sum<T>(vec: &Vec<T>, f: impl Fn(&T) -> &Option<usize>) -> usize {
+    fn check_sum<T>(vec: &[T], f: impl Fn(&T) -> &Option<usize>) -> usize {
         vec.iter()
             .enumerate()
-            .filter_map(|(index, num)| f(&num).and_then(|num| Some(index * num)))
+            .filter_map(|(index, num)| f(num).and_then(|num| Some(index * num)))
             .sum()
     }
 }

@@ -42,7 +42,7 @@ pub struct DirectionIter<'a> {
     shift: usize,
 }
 
-impl<'a> Iterator for DirectionIter<'a> {
+impl Iterator for DirectionIter<'_> {
     type Item = Direction;
 
     fn next(&mut self) -> Option<Self::Item> {

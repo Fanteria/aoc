@@ -106,7 +106,7 @@ impl<T> Grid<T> {
             .lines()
             .flat_map(|line| {
                 height += 1;
-                line.chars().map(|c| f(c)).collect::<Vec<_>>()
+                line.chars().map(&f).collect::<Vec<_>>()
             })
             .collect::<Vec<_>>();
         Self {

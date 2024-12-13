@@ -145,3 +145,27 @@ fn task_11_bonus(b: &mut Bencher) {
     let (t, input) = prepare(11, TaskType::Bonus);
     b.iter(|| t.run(&input))
 }
+
+#[bench]
+fn task_12_normal(b: &mut Bencher) {
+    let (t, input) = prepare(12, TaskType::Normal);
+    b.iter(|| t.run(&input))
+}
+
+#[bench]
+fn task_12_bonus(b: &mut Bencher) {
+    let (t, input) = prepare(12, TaskType::Bonus);
+    b.iter(|| t.run(&input))
+}
+
+#[bench]
+fn task_13_normal(b: &mut Bencher) {
+    let (t, input) = prepare(13, TaskType::Normal);
+    b.iter(|| t.run(&input))
+}
+
+#[bench]
+fn task_13_bonus(b: &mut Bencher) {
+    let (t, input) = prepare(13, TaskType::Bonus);
+    b.iter(|| t.run(&input))
+}
