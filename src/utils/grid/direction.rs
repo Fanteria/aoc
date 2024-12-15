@@ -35,6 +35,14 @@ impl Direction {
     pub fn iter(&self) -> DirectionIter {
         DirectionIter{ direction: self, shift: 0 }
     }
+
+    pub fn is_horizontal(&self) -> bool {
+        *self == Self::Left || *self == Self::Right
+    }
+
+    pub fn is_vertical(&self) -> bool {
+        *self == Self::Up || *self == Self::Down
+    }
 }
 
 pub struct DirectionIter<'a> {

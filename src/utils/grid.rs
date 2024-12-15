@@ -25,6 +25,10 @@ impl<T> Grid<T> {
         }
     }
 
+    pub fn consume_data(self) -> Vec<T> {
+        self.data
+    }
+
     fn point_from_index(&self, index: usize) -> Point {
         new_point(index / self.width, index % self.width)
     }
