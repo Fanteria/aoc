@@ -149,14 +149,14 @@ impl TaskRun for Task14 {
 
     fn bonus(input: &str) -> usize {
         let mut area = Area::read_area(input);
-        let variances = (0..103)
+        let variances = (0..std::cmp::max(area.height, area.width))
             .map(|i| {
                 area.move_roborts(1);
                 let (x, y) = area.variances();
                 (i, x as u32, y as u32)
             })
             .collect::<Vec<_>>();
-        type FnCompare = fn(&(u32, u32, u32), &(u32, u32, u32)) -> Ordering;
+        type FnCompare = fn(&(usize, u32, u32), &(usize, u32, u32)) -> Ordering;
         let min =
             |compare: FnCompare| variances.iter().min_by(|a, b| compare(a, b)).unwrap().0 as i32;
 
