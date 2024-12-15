@@ -17,6 +17,14 @@ pub struct Grid<T> {
 }
 
 impl<T> Grid<T> {
+    pub fn new(data: Vec<T>, width: usize) -> Self {
+        Self {
+            height: data.len() / width,
+            width,
+            data
+        }
+    }
+
     fn point_from_index(&self, index: usize) -> Point {
         new_point(index / self.width, index % self.width)
     }

@@ -61,7 +61,7 @@ impl Task06 {
         let mut direction = Direction::Up;
         let mut hitted_barriers: HashMap<Point, [bool; 4]> = HashMap::new();
 
-        while let Some(next_point) = point.adjacent(direction, &grid) {
+        while let Some(next_point) = point.adjacent(direction, grid) {
             match grid.get_at(&next_point) {
                 PointState::Barrier => {
                     let directions = hitted_barriers.entry(next_point).or_default();

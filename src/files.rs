@@ -71,7 +71,7 @@ impl Files {
             .unwrap_or_else(|e| panic!("Failed to open file {:?}. Error: {e}", path));
         let mut ret = String::new();
         file.read_to_string(&mut ret)
-            .unwrap_or_else(|e| panic!("Failed to read fiel {:?}. Error: {e}", path));
+            .unwrap_or_else(|e| panic!("Failed to read file {:?}. Error: {e}", path));
         ret.trim()
             .parse()
             .expect("Out file should contain only number")
