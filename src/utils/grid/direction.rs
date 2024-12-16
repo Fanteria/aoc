@@ -27,6 +27,10 @@ impl Direction {
         CLOCKWISE[(shift + *self as usize) % CLOCKWISE.len()]
     }
 
+    pub fn counter_clockwise(&self, shift: usize) -> Self {
+        self.clockwise(CLOCKWISE.len() - (shift % CLOCKWISE.len()))
+    }
+
     #[allow(dead_code)]
     pub fn oposite(&self) -> Self {
         CLOCKWISE[((CLOCKWISE.len() / 2) + *self as usize) % CLOCKWISE.len()]

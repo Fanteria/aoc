@@ -280,3 +280,24 @@ fn task_15() {
     let (input, output) = get_io(&f, FilesType::Task, &t);
     assert_eq!(t.run(&input), output);
 }
+
+#[test]
+fn task_16() {
+    let f = Files::from_env();
+
+    let t = Task::new(16, TaskType::Normal);
+    let (input, output) = get_io(&f, FilesType::Example, &t);
+    assert_eq!(t.run(&input), output);
+    let (input, output) = get_io(&f, FilesType::Custom("1"), &t);
+    assert_eq!(t.run(&input), output);
+    // let (input, output) = get_io(&f, FilesType::Task, &t);
+    // assert_eq!(t.run(&input), output);
+
+    let t = Task::new(16, TaskType::Bonus);
+    let (input, output) = get_io(&f, FilesType::Example, &t);
+    assert_eq!(t.run(&input), output);
+    let (input, output) = get_io(&f, FilesType::Custom("1"), &t);
+    assert_eq!(t.run(&input), output);
+    // let (input, output) = get_io(&f, FilesType::Task, &t);
+    // assert_eq!(t.run(&input), output);
+}
