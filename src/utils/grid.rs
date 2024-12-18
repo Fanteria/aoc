@@ -17,11 +17,22 @@ pub struct Grid<T> {
 }
 
 impl<T> Grid<T> {
+    pub fn from_dimensions(width: usize, height: usize) -> Self
+    where
+        T: Default + Clone,
+    {
+        Self {
+            height,
+            width,
+            data: vec![Default::default(); height * width],
+        }
+    }
+
     pub fn new(data: Vec<T>, width: usize) -> Self {
         Self {
             height: data.len() / width,
             width,
-            data
+            data,
         }
     }
 
