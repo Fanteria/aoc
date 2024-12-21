@@ -115,4 +115,9 @@ impl Point {
                 y: index % grid.width,
             })
     }
+
+    #[inline]
+    pub fn manhattan_distance(&self, other: &Self) -> usize {
+        self.x.abs_diff(other.x) + self.y.abs_diff(other.y)
+    }
 }
