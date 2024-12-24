@@ -34,7 +34,7 @@ fn get_move(delta: i64, negative: Direction, positive: Direction) -> Vec<RobotMo
         _ => return vec![],
     };
     iter::repeat(RobotMove::Move(direction))
-        .take(delta.abs() as usize)
+        .take(delta.unsigned_abs() as usize)
         .collect()
 }
 
@@ -71,9 +71,9 @@ fn keypad_moves(code: Code) -> Vec<RobotMove> {
                 || (horizontal.first() == Some(&RobotMove::Move(Direction::Left))
                     && !(prev.y == 3 && act.x == 0))
             {
-                horizontal.into_iter().chain(vertical.into_iter())
+                horizontal.into_iter().chain(vertical)
             } else {
-                vertical.into_iter().chain(horizontal.into_iter())
+                vertical.into_iter().chain(horizontal)
             }
             .chain([RobotMove::Push])
         })
@@ -142,7 +142,7 @@ fn sequence(
         prev = *cc;
     }
     known.insert((p, c, depth), r);
-    known[&(p, c, depth)].clone()
+    known[&(p, c, depth)]
 }
 
 fn get_sequences_len_sum(input: &str, depth: usize) -> usize {
@@ -160,7 +160,7 @@ fn get_sequences_len_sum(input: &str, depth: usize) -> usize {
 
     input
         .lines()
-        .map(|line| Code(line))
+        .map(Code)
         .map(|code| code.get_num() * get_sequence_len(&keypad_moves(code)))
         .sum()
 }

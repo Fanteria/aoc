@@ -82,10 +82,10 @@ fn possible_cheats<'a>(
 }
 
 fn count_cheats(grid: &Grid<Tile>, max_cheat_time: i32) -> usize {
-    let path = get_path(&grid);
+    let path = get_path(grid);
     path.par_iter()
         .map(|(start, from_start)| {
-            possible_cheats(&grid, start, max_cheat_time)
+            possible_cheats(grid, start, max_cheat_time)
                 .filter(|point| {
                     path.get(point).is_some_and(|end_point_from_start| {
                         *end_point_from_start > *from_start
