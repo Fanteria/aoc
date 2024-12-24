@@ -23,11 +23,11 @@ pub enum Direction {
 }
 
 impl Direction {
-    pub fn clockwise(&self, shift: usize) -> Self {
+    pub const fn clockwise(&self, shift: usize) -> Self {
         CLOCKWISE[(shift + *self as usize) % CLOCKWISE.len()]
     }
 
-    pub fn counter_clockwise(&self, shift: usize) -> Self {
+    pub const fn counter_clockwise(&self, shift: usize) -> Self {
         self.clockwise(CLOCKWISE.len() - (shift % CLOCKWISE.len()))
     }
 
@@ -36,8 +36,11 @@ impl Direction {
         CLOCKWISE[((CLOCKWISE.len() / 2) + *self as usize) % CLOCKWISE.len()]
     }
 
-    pub fn iter(&self) -> DirectionIter {
-        DirectionIter{ direction: self, shift: 0 }
+    pub const fn iter(&self) -> DirectionIter {
+        DirectionIter {
+            direction: self,
+            shift: 0,
+        }
     }
 
     pub fn is_horizontal(&self) -> bool {

@@ -91,7 +91,7 @@ impl Point {
         Self::new(x, y, grid)
     }
 
-    pub fn coordinaes(&self) -> (usize, usize) {
+    pub const fn coordinaes(&self) -> (usize, usize) {
         (self.x, self.y)
     }
 
