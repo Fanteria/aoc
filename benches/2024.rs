@@ -1,4 +1,5 @@
 #![feature(test)]
+#![feature(iter_next_chunk)]
 
 extern crate test;
 
@@ -253,5 +254,17 @@ fn task_21_normal(b: &mut Bencher) {
 #[bench]
 fn task_21_bonus(b: &mut Bencher) {
     let (t, input) = prepare(21, TaskType::Bonus);
+    b.iter(|| t.run(&input))
+}
+
+#[bench]
+fn task_22_normal(b: &mut Bencher) {
+    let (t, input) = prepare(22, TaskType::Normal);
+    b.iter(|| t.run(&input))
+}
+
+#[bench]
+fn task_22_bonus(b: &mut Bencher) {
+    let (t, input) = prepare(22, TaskType::Bonus);
     b.iter(|| t.run(&input))
 }
