@@ -32,20 +32,30 @@ impl Parser {
     }
 
     #[inline]
+    pub fn iter_line_sep<'a, T>(line: &'a str, sep: &'a str) -> impl Iterator<Item = T> + 'a
+    where
+        T: FromStr,
+        <T as FromStr>::Err: Debug,
+    {
+        line.split(sep).map(|num| num.trim().parse().unwrap())
+    }
+
+    #[inline]
     pub fn iter_vec_sep<'a, T>(lines: &'a str, sep: &'a str) -> impl Iterator<Item = Vec<T>> + 'a
     where
         T: FromStr,
         <T as FromStr>::Err: Debug,
     {
-        lines.lines().map(move |line| {
-            line.split(sep)
-                .map(|num| num.trim().parse().unwrap())
-                .collect()
-        })
+        lines
+            .lines()
+            .map(move |line| Self::iter_line_sep(line, sep).collect())
     }
 
     #[inline]
-    pub fn iter_array_sep<'a, T, const N: usize>(lines: &'a str, sep: &'a str) -> impl Iterator<Item = [T; N]> + 'a
+    pub fn iter_array_sep<'a, T, const N: usize>(
+        lines: &'a str,
+        sep: &'a str,
+    ) -> impl Iterator<Item = [T; N]> + 'a
     where
         T: FromStr,
         <T as FromStr>::Err: Debug,
