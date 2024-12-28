@@ -1,4 +1,8 @@
-use std::{collections::{HashMap, HashSet}, fmt::Display, str::FromStr};
+use std::{
+    collections::{HashMap, HashSet, VecDeque},
+    fmt::Display,
+    str::FromStr,
+};
 
 use crate::{
     tasks::TaskRun,
@@ -73,7 +77,7 @@ impl Position {
                     point,
                     direction,
                     score: self.score + if direction == self.direction { 1 } else { 1001 },
-                    tiles: self.tiles.clone()
+                    tiles: self.tiles.clone(),
                 })
             }
         };
@@ -84,7 +88,7 @@ impl Position {
             get_next(self.direction.counter_clockwise(2)),
         ]
         .into_iter()
-        .filter_map(|p| p)
+        .flatten()
     }
 }
 
@@ -94,18 +98,19 @@ impl TaskRun for Task16 {
         Self: Sized,
     {
         let grid = Grid::<Cell>::from_str(input).unwrap();
-        let mut points = vec![Position::new(&grid)];
+        let mut points = VecDeque::new();
+        points.push_front(Position::new(&grid));
 
         let mut solution: u32 = u32::MAX;
         let mut tiles: Vec<Point> = Vec::new();
         let mut crosroads: HashMap<Point, (u32, Direction)> = HashMap::new();
         let mut i = 0;
-        while let Some(act) = points.pop() {
+        while let Some(act) = points.pop_front() {
             points.extend(act.next(&grid).filter(|p| {
                 if !crosroads.contains_key(&p.point) {
                     crosroads.insert(p.point.clone(), (p.score, p.direction));
-                } else  {
-                    let (score, direction) = crosroads.get_mut(&p.point).unwrap();
+                } else {
+                    let (score, _) = crosroads.get_mut(&p.point).unwrap();
                     if p.score >= *score {
                         return false;
                     } else {

@@ -280,3 +280,15 @@ fn task_23_bonus(b: &mut Bencher) {
     let (t, input) = prepare(23, TaskType::Bonus);
     b.iter(|| t.run(&input))
 }
+
+#[bench]
+fn task_24_normal(b: &mut Bencher) {
+    let (t, input) = prepare(23, TaskType::Normal);
+    b.iter(|| t.run(&input))
+}
+
+#[bench]
+fn task_24_bonus(b: &mut Bencher) {
+    let (t, input) = prepare(23, TaskType::Bonus);
+    b.iter(|| t.run(&input))
+}
