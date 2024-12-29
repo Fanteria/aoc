@@ -1,4 +1,5 @@
 use std::{collections::HashMap, iter};
+use std::fmt::Display;
 
 use crate::{
     tasks::TaskRun,
@@ -166,14 +167,14 @@ fn get_sequences_len_sum(input: &str, depth: usize) -> usize {
 }
 
 impl TaskRun for Task21 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
         get_sequences_len_sum(input, 1)
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {

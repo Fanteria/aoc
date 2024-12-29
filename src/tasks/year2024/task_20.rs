@@ -100,14 +100,14 @@ fn count_cheats(grid: &Grid<Tile>, max_cheat_time: i32) -> usize {
 }
 
 impl TaskRun for Task20 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
         count_cheats(&Grid::<Tile>::from_str(input).unwrap(), 2)
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {

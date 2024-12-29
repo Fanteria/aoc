@@ -1,4 +1,5 @@
 use crate::tasks::TaskRun;
+use std::fmt::Display;
 use crate::utils::grid::{Grid, Path, Point};
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 use itertools::Itertools;
@@ -21,7 +22,7 @@ impl Task08 {
 }
 
 impl TaskRun for Task08 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         let (grid, anthennas) = Self::read(input);
         anthennas
             .into_iter()
@@ -35,7 +36,7 @@ impl TaskRun for Task08 {
             .len()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         let (grid, anthennas) = Self::read(input);
         anthennas
             .into_iter()

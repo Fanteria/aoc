@@ -1,4 +1,5 @@
 use crate::tasks::TaskRun;
+use std::fmt::Display;
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 
 pub struct Task23;
@@ -47,7 +48,7 @@ fn bron_kerbosch2<'a>(
 }
 
 impl TaskRun for Task23 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -73,7 +74,7 @@ impl TaskRun for Task23 {
             .len()
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -90,7 +91,6 @@ impl TaskRun for Task23 {
 
         let mut clique: Vec<_> = max_cliques.into_iter().collect();
         clique.sort();
-        println!("{}", clique.join(","));
-        0
+        clique.join(",")
     }
 }

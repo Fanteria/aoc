@@ -93,7 +93,7 @@ impl Position {
 }
 
 impl TaskRun for Task16 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -135,60 +135,53 @@ impl TaskRun for Task16 {
         solution as usize
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {
         let grid = Grid::<Cell>::from_str(input).unwrap();
-        let mut points = vec![Position::new(&grid)];
+        let mut points = VecDeque::new();
+        points.push_front(Position::new(&grid));
 
         let mut solution: u32 = u32::MAX;
         let mut tiles: HashSet<Point> = HashSet::new();
-        let mut crosroads: HashMap<Point, (u32, Direction)> = HashMap::new();
-        while let Some(act) = points.pop() {
+        let mut crosroads: HashMap<Point, u32> = HashMap::new();
+        while let Some(act) = points.pop_front() {
             points.extend(act.next(&grid).filter(|p| {
-
-                // std::thread::sleep(std::time::Duration::from_millis(100));
-                // println!("{p:?}");
-                // let mut g = grid.clone();
-                // for point in &p.tiles {
-                //     *g.get_at_mut(point) = Cell::Start;
-                // }
-                // println!("{g}");
-
                 if !crosroads.contains_key(&p.point) {
-                    crosroads.insert(p.point.clone(), (p.score, p.direction));
-                } else  {
-                    let (score, direction) = crosroads.get_mut(&p.point).unwrap();
-                    // println!("p.score: {}, score: {}, direction: {:?}", p.score, *score, p.direction);
-                    if (p.score > *score && p.direction == *direction) || (p.score > *score + 1000) {
+                    crosroads.insert(p.point.clone(), p.score);
+                } else {
+                    let score = crosroads.get_mut(&p.point).unwrap();
+                    if p.score > *score + 1000 {
                         return false;
                     } else {
                         *score = p.score;
                     }
                 }
 
-                if *grid.get_at(&p.point) == Cell::End {
-                    if p.score < solution {
+                match grid.get_at(&p.point) {
+                    Cell::End if p.score < solution => {
                         solution = p.score;
                         tiles.clear();
                         tiles.extend(p.tiles.clone().into_iter());
-                    } else if p.score == solution {
-                        tiles.extend(p.tiles.clone().into_iter());
+                        false
                     }
-                    false
-                } else {
-                    true
+                    Cell::End if p.score == solution => {
+                        tiles.extend(p.tiles.clone().into_iter());
+                        false
+                    }
+                    Cell::End => false,
+                    _ => true,
                 }
             }));
         }
 
-        println!("{tiles:?}");
-        let mut g = grid.clone();
-        for point in &tiles {
-            *g.get_at_mut(point) = Cell::Start;
-        }
-        println!("{g}");
+        // println!("{tiles:?}");
+        // let mut g = grid.clone();
+        // for point in &tiles {
+        //     *g.get_at_mut(point) = Cell::Start;
+        // }
+        // println!("{g}");
         tiles.len() + 1
     }
 }

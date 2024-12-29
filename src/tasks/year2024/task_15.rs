@@ -171,7 +171,7 @@ fn robot_walkthrough(
 }
 
 impl TaskRun for Task15 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -196,7 +196,7 @@ impl TaskRun for Task15 {
         gps(grid)
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {

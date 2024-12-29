@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use std::fmt::Display;
 use rayon::iter::*;
 
 use crate::tasks::TaskRun;
@@ -14,7 +15,7 @@ fn next_secret(mut secret: usize) -> usize {
 }
 
 impl TaskRun for Task22 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -23,10 +24,10 @@ impl TaskRun for Task22 {
             .par_bridge()
             .map(|line| line.parse::<usize>().unwrap())
             .map(|secret| (0..2000).fold(secret, |act_secret, _| next_secret(act_secret)))
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {

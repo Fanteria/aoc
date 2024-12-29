@@ -231,7 +231,17 @@ fn task_18_bonus(b: &mut Bencher) {
     b.iter(|| t.run(&input))
 }
 
-// TODO missing 19
+#[bench]
+fn task_19_normal(b: &mut Bencher) {
+    let (t, input) = prepare(19, TaskType::Normal);
+    b.iter(|| t.run(&input))
+}
+
+#[bench]
+fn task_19_bonus(b: &mut Bencher) {
+    let (t, input) = prepare(19, TaskType::Bonus);
+    b.iter(|| t.run(&input))
+}
 
 #[bench]
 fn task_20_normal(b: &mut Bencher) {
@@ -283,12 +293,18 @@ fn task_23_bonus(b: &mut Bencher) {
 
 #[bench]
 fn task_24_normal(b: &mut Bencher) {
-    let (t, input) = prepare(23, TaskType::Normal);
+    let (t, input) = prepare(24, TaskType::Normal);
     b.iter(|| t.run(&input))
 }
 
 #[bench]
 fn task_24_bonus(b: &mut Bencher) {
-    let (t, input) = prepare(23, TaskType::Bonus);
+    let (t, input) = prepare(24, TaskType::Bonus);
+    b.iter(|| t.run(&input))
+}
+
+#[bench]
+fn task_25_normal(b: &mut Bencher) {
+    let (t, input) = prepare(25, TaskType::Normal);
     b.iter(|| t.run(&input))
 }

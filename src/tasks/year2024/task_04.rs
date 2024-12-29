@@ -1,5 +1,6 @@
 use crate::tasks::TaskRun;
 use itertools::Itertools;
+use std::fmt::Display;
 
 const XMAS: &str = "XMAS";
 const SAMX: &str = "SAMX";
@@ -73,7 +74,7 @@ impl Task04 {
 }
 
 impl TaskRun for Task04 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         let d = Task04::read(input);
 
         Itertools::cartesian_product(0..d.data.len(), 0..d.data[0].len())
@@ -89,7 +90,7 @@ impl TaskRun for Task04 {
             .count()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         let d = Task04::read(input);
         Itertools::cartesian_product(1..d.data.len() - 1, 1..d.data[0].len() - 1)
             .filter(|(x, y)| d.data[*x].chars().nth(*y).unwrap() == 'A')

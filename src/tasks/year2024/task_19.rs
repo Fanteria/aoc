@@ -1,5 +1,6 @@
 use ahash::AHashMap as HashMap;
 use itertools::Itertools;
+use std::fmt::Display;
 
 use crate::{tasks::TaskRun, utils::Parser};
 pub struct Task19;
@@ -73,19 +74,16 @@ fn possible_design(towels: &HashMap<char, Vec<String>>, design: &str) -> bool {
         return true;
     }
     if let Some(towels_list) = towels.get(&design.chars().next().unwrap()) {
-        for towel in towels_list {
-            if design.starts_with(towel) {
-                if possible_design(towels, design.get(towel.len()..).unwrap()) {
-                    return true;
-                }
-            }
-        }
+        towels_list.iter().any(|towel| {
+            design.starts_with(towel) && possible_design(towels, design.get(towel.len()..).unwrap())
+        })
+    } else {
+        false
     }
-    false
 }
 
 impl TaskRun for Task19 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -104,7 +102,7 @@ impl TaskRun for Task19 {
             .count()
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -117,6 +115,6 @@ impl TaskRun for Task19 {
         designs
             .lines()
             .map(|design| trie.count_possible_designs(design.chars().collect_vec().as_slice()))
-            .sum()
+            .sum::<usize>()
     }
 }

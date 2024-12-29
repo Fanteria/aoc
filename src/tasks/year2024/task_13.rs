@@ -1,6 +1,6 @@
-use std::str::FromStr;
-
 use crate::tasks::TaskRun;
+use std::fmt::Display;
+use std::str::FromStr;
 
 pub struct Task13;
 
@@ -85,15 +85,15 @@ impl FromStr for Automat {
 }
 
 impl TaskRun for Task13 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         input
             .split("\n\n")
             .filter_map(|s| Automat::from_str(s).unwrap().solve())
             .map(|solution| solution.a as usize * 3 + solution.b as usize)
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         input
             .split("\n\n")
             .filter_map(|s| {
@@ -103,7 +103,7 @@ impl TaskRun for Task13 {
                 automat.solve()
             })
             .map(|solution| solution.a as usize * 3 + solution.b as usize)
-            .sum()
+            .sum::<usize>()
     }
 }
 

@@ -1,4 +1,5 @@
 use crate::tasks::TaskRun;
+use std::fmt::Display;
 use rayon::prelude::*;
 
 pub struct Task07;
@@ -19,7 +20,7 @@ impl Task07 {
 }
 
 impl TaskRun for Task07 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         fn evaluate(numbers: &[usize], act: usize, index: usize, expected: usize) -> bool {
             if index == numbers.len() {
                 act == expected
@@ -39,10 +40,10 @@ impl TaskRun for Task07 {
                     None
                 }
             })
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         fn evaluate(numbers: &[usize], act: usize, index: usize, expected: usize) -> bool {
             if index == numbers.len() {
                 act == expected
@@ -70,6 +71,6 @@ impl TaskRun for Task07 {
                     None
                 }
             })
-            .sum()
+            .sum::<usize>()
     }
 }

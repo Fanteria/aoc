@@ -151,11 +151,11 @@ impl Task09 {
 }
 
 impl TaskRun for Task09 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         Self::check_sum(&Self::normal_sort(Self::normal_read(input)), |num| num)
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         Self::bonus_sort(Self::bonus_read(input))
             .blocks
             .iter()
@@ -164,7 +164,7 @@ impl TaskRun for Task09 {
                     .map(|index| index * b.id)
                     .sum::<usize>()
             })
-            .sum()
+            .sum::<usize>()
     }
 }
 

@@ -2,8 +2,9 @@ use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Grid, Point},
 };
-use std::{ops::AddAssign, str::FromStr};
 use ahash::AHashSet as HashSet;
+use std::fmt::Display;
+use std::{ops::AddAssign, str::FromStr};
 
 pub struct Task12;
 
@@ -79,8 +80,9 @@ where
 {
     visited.insert(point.clone());
     let mut garden = G::from(point.clone());
-    (0..8).step_by(2).for_each(
-        |i| match point.adjacent(Direction::Up.clockwise(i), grid) {
+    (0..8)
+        .step_by(2)
+        .for_each(|i| match point.adjacent(Direction::Up.clockwise(i), grid) {
             Some(up) if grid.get_at(&up) != grid.get_at(point) => add_fence(&mut garden, point),
             Some(up) if !visited.contains(&up) => {
                 garden += dfs(&up, grid, visited, add_fence);
@@ -90,21 +92,20 @@ where
                 unreachable!()
             }
             None => add_fence(&mut garden, point),
-        },
-    );
+        });
     garden
 }
 
 impl TaskRun for Task12 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         let grid = Grid::<char>::from_str(input).unwrap();
         walkthrough_gardens::<Garden>(&grid, &|garden, _| garden.fence += 1)
             .iter()
             .map(|g| g.fence * g.area.len())
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         let grid = Grid::<char>::from_str(input).unwrap();
         walkthrough_gardens::<GardenFenceDisard>(&grid, &|garden, point| {
             garden.points.insert(point.clone());
@@ -143,7 +144,7 @@ impl TaskRun for Task12 {
             });
             count * g.points.len()
         })
-        .sum()
+        .sum::<usize>()
     }
 }
 
@@ -168,27 +169,5 @@ mod tests {
         let garden = dfs::<Garden>(&point, &grid, &mut visited, &|garden, _| garden.fence += 1);
         assert_eq!(garden.area.len(), 4);
         assert_eq!(garden.fence, 10);
-    }
-
-    #[test]
-    fn dfs_bonus_test() {
-        // const INPUT1: &str = "AABB\nAABB";
-        // let mut visited: HashSet<Point> = HashSet::new();
-        // let grid = Grid::<char>::from_str(INPUT1).unwrap();
-        // let point = Point::new(0, 0, &grid).unwrap();
-        // let garden = dfs_bonus(&point, &grid, &mut visited);
-        // assert_eq!(garden.area, 4);
-        // assert_eq!(garden.points.len(), 4);
-        // println!("{visited:?}");
-        //
-        // const INPUT2: &str = "AABB
-        //                     \nCAAD";
-        // let mut visited: HashSet<Point> = HashSet::new();
-        // let grid = Grid::<char>::from_str(INPUT2).unwrap();
-        // let point = Point::new(0, 0, &grid).unwrap();
-        // let garden = dfs_bonus(&point, &grid, &mut visited);
-        // assert_eq!(garden.area, 4);
-        // assert_eq!(garden.points.len(), 6);
-        // println!("{visited:?}");
     }
 }

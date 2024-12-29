@@ -141,13 +141,13 @@ impl Display for Area {
 }
 
 impl TaskRun for Task14 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         let mut area = Area::read_area(input);
         area.move_roborts(100);
-        area.robots_in_quadrants().iter().product()
+        area.robots_in_quadrants().iter().product::<usize>()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         let mut area = Area::read_area(input);
         let variances = (0..std::cmp::max(area.height, area.width))
             .map(|i| {

@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::tasks::TaskRun;
 use crate::utils::Parser;
 use ahash::AHashMap as HashMap;
@@ -17,17 +19,17 @@ impl Task01 {
 }
 
 impl TaskRun for Task01 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         let (mut left, mut right) = Self::read_lines(input);
         left.sort();
         right.sort();
         left.iter()
             .zip(right.iter())
             .map(|(l, r)| l.abs_diff(*r))
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         let (left, right) = Self::read_lines(input);
         let mut map: HashMap<usize, usize> = HashMap::new();
         right.into_iter().for_each(|item| {

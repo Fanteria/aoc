@@ -65,16 +65,14 @@ impl Files {
         }
     }
 
-    pub fn get_output(&self, file_type: FilesType, task: &Task) -> usize {
+    pub fn get_output(&self, file_type: FilesType, task: &Task) -> String {
         let path = self.get_file(file_type, FileIO::Out, task);
         let mut file = File::open(&path)
             .unwrap_or_else(|e| panic!("Failed to open file {:?}. Error: {e}", path));
         let mut ret = String::new();
         file.read_to_string(&mut ret)
             .unwrap_or_else(|e| panic!("Failed to read file {:?}. Error: {e}", path));
-        ret.trim()
-            .parse()
-            .expect("Out file should contain only number")
+        ret.trim().to_string()
     }
 
     pub fn get_input(&self, file_type: FilesType, task: &Task) -> String {

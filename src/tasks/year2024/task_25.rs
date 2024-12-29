@@ -1,10 +1,11 @@
 use crate::tasks::TaskRun;
+use std::fmt::Display;
 use itertools::Itertools;
 
 pub struct Task25;
 
 impl TaskRun for Task25 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -35,13 +36,13 @@ impl TaskRun for Task25 {
                     .filter(|key| (0..lock.len()).all(|i| lock[i] + key[i] < 6))
                     .count()
             })
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(_input: &str) -> usize
+    fn bonus(_input: &str) -> impl Display
     where
         Self: Sized,
     {
-        todo!()
+        ""
     }
 }

@@ -1,8 +1,7 @@
-use std::fmt::Display;
-
 use crate::tasks::TaskRun;
 use ahash::AHashMap as HashMap;
 use itertools::Itertools;
+use std::fmt::Display;
 
 pub struct Task24;
 
@@ -107,7 +106,7 @@ impl<'a> From<&'a str> for Wiring<'a> {
 }
 
 impl TaskRun for Task24 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -119,10 +118,10 @@ impl TaskRun for Task24 {
             .sorted()
             .enumerate()
             .map(|(index, id)| if wiring.get(id) { 1 << index } else { 0 })
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -134,7 +133,7 @@ impl TaskRun for Task24 {
             .max()
             .unwrap();
 
-        let x = wiring
+        wiring
             .wiring
             .iter()
             .filter_map(|(wire, expression)| match (wire, expression) {
@@ -166,9 +165,6 @@ impl TaskRun for Task24 {
                 _ => None,
             })
             .sorted()
-            .join(",");
-        println!("{x}");
-
-        1
+            .join(",")
     }
 }

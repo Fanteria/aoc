@@ -1,12 +1,8 @@
 use crate::tasks::TaskRun;
 use crate::utils::Parser;
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
-use std::{
-    cmp::Ordering,
-    fmt::Debug,
-    hash::Hash,
-    str::FromStr,
-};
+use std::fmt::Display;
+use std::{cmp::Ordering, fmt::Debug, hash::Hash, str::FromStr};
 
 pub struct Task05;
 
@@ -26,7 +22,7 @@ impl Task05 {
 }
 
 impl TaskRun for Task05 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         let (rules, pages_list) = Self::read::<usize>(input);
         pages_list
             .filter_map(|pages| {
@@ -36,10 +32,10 @@ impl TaskRun for Task05 {
                     None
                 }
             })
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         let (rules, pages_list) = Self::read::<usize>(input);
         pages_list
             .filter_map(|mut pages| {
@@ -56,6 +52,6 @@ impl TaskRun for Task05 {
                     None
                 }
             })
-            .sum()
+            .sum::<usize>()
     }
 }

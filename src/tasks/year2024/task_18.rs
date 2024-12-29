@@ -53,7 +53,7 @@ fn find_path(mut grid: Grid<Tail>, start: Point) -> Option<usize> {
 }
 
 impl TaskRun for Task18 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -71,7 +71,7 @@ impl TaskRun for Task18 {
         find_path(grid, start).unwrap()
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {

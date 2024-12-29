@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::fmt::Display;
 
 use crate::{
     tasks::TaskRun,
@@ -32,20 +33,20 @@ impl Task10 {
 }
 
 impl TaskRun for Task10 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         let grid = Grid::<u32>::from_str_by(input, |c| c.to_digit(10).unwrap_or(99));
         grid.items_with_points()
             .filter(|(_, item)| **item == 0)
             .map(|(point, _)| Self::find_paths(&grid, point).iter().collect::<HashSet<_>>().len())
-            .sum()
+            .sum::<usize>()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         let grid = Grid::<u32>::from_str_by(input, |c| c.to_digit(10).unwrap_or(99));
         grid.items_with_points()
             .filter(|(_, item)| **item == 0)
             .map(|(point, _)| Self::find_paths(&grid, point).len())
-            .sum()
+            .sum::<usize>()
     }
 }
 

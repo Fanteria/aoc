@@ -86,7 +86,7 @@ impl Task06 {
 }
 
 impl TaskRun for Task06 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         let grid = Grid::<PointState>::from_str(input).unwrap();
         Self::guard_travel(grid)
             .items()
@@ -94,7 +94,7 @@ impl TaskRun for Task06 {
             .count()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         let grid = Grid::<PointState>::from_str(input).unwrap();
         let start = grid.find(&PointState::Visited).unwrap();
         let mut grid = Self::guard_travel(grid);

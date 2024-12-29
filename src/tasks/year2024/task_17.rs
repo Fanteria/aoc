@@ -1,4 +1,5 @@
 use crate::tasks::TaskRun;
+use std::fmt::Display;
 
 pub struct Task17;
 
@@ -73,7 +74,7 @@ fn run(registers: &mut Registers, program: &[u8]) -> Vec<u8> {
 }
 
 impl TaskRun for Task17 {
-    fn normal(input: &str) -> usize
+    fn normal(input: &str) -> impl Display
     where
         Self: Sized,
     {
@@ -83,7 +84,7 @@ impl TaskRun for Task17 {
             .fold(0_usize, |acc, num| (10 * acc) + num as usize)
     }
 
-    fn bonus(input: &str) -> usize
+    fn bonus(input: &str) -> impl Display
     where
         Self: Sized,
     {

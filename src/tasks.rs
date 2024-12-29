@@ -4,9 +4,13 @@ use clap::{Parser, ValueEnum};
 use std::fmt::Display;
 
 trait TaskRun: Sync {
-    fn normal(input: &str) -> usize where Self: Sized;
+    fn normal(input: &str) -> impl Display
+    where
+        Self: Sized;
 
-    fn bonus(input: &str) -> usize where Self: Sized;
+    fn bonus(input: &str) -> impl Display
+    where
+        Self: Sized;
 }
 
 #[derive(ValueEnum, Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -45,11 +49,8 @@ impl Task {
         }
     }
 
-    pub fn run(&self, input: &str) -> usize {
-        match self.task_type {
-            TaskType::Normal => year2024::TASKS_NORMAL[(self.task_number - 1) as usize](input),
-            TaskType::Bonus => year2024::TASKS_BONUS[(self.task_number - 1) as usize](input),
-        }
+    pub fn run(&self, input: &str) -> String {
+        year2024::run_task(input, self.task_number, self.task_type)
     }
 
     pub fn next(mut self) -> Self {

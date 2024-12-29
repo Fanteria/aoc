@@ -1,4 +1,5 @@
 use crate::{tasks::TaskRun, utils::Parser};
+use std::fmt::Display;
 
 pub struct Task02;
 
@@ -18,13 +19,13 @@ impl Task02 {
 }
 
 impl TaskRun for Task02 {
-    fn normal(input: &str) -> usize {
+    fn normal(input: &str) -> impl Display {
         Parser::iter_vec::<usize>(input)
             .filter(|record| Self::is_valid(record))
             .count()
     }
 
-    fn bonus(input: &str) -> usize {
+    fn bonus(input: &str) -> impl Display {
         Parser::iter_vec::<usize>(input)
             .filter(|record| {
                 Self::is_valid(record)
