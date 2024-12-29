@@ -2,13 +2,14 @@ mod year2024;
 
 use clap::{Parser, ValueEnum};
 use std::fmt::Display;
+use anyhow::Result;
 
 trait TaskRun: Sync {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized;
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized;
 }
@@ -49,7 +50,7 @@ impl Task {
         }
     }
 
-    pub fn run(&self, input: &str) -> String {
+    pub fn run(&self, input: &str) -> Result<String> {
         year2024::run_task(input, self.task_number, self.task_type)
     }
 

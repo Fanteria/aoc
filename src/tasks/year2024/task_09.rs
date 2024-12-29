@@ -1,6 +1,6 @@
-use std::{fmt::Display, iter};
-
 use crate::tasks::TaskRun;
+use anyhow::Result;
+use std::{fmt::Display, iter};
 
 pub struct Task09;
 
@@ -151,12 +151,15 @@ impl Task09 {
 }
 
 impl TaskRun for Task09 {
-    fn normal(input: &str) -> impl Display {
-        Self::check_sum(&Self::normal_sort(Self::normal_read(input)), |num| num)
+    fn normal(input: &str) -> Result<impl Display> {
+        Ok(Self::check_sum(
+            &Self::normal_sort(Self::normal_read(input)),
+            |num| num,
+        ))
     }
 
-    fn bonus(input: &str) -> impl Display {
-        Self::bonus_sort(Self::bonus_read(input))
+    fn bonus(input: &str) -> Result<impl Display> {
+        Ok(Self::bonus_sort(Self::bonus_read(input))
             .blocks
             .iter()
             .map(|b| {
@@ -164,7 +167,7 @@ impl TaskRun for Task09 {
                     .map(|index| index * b.id)
                     .sum::<usize>()
             })
-            .sum::<usize>()
+            .sum::<usize>())
     }
 }
 

@@ -1,10 +1,10 @@
-use std::collections::HashSet;
-use std::fmt::Display;
-
 use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Grid, Point},
 };
+use anyhow::Result;
+use std::collections::HashSet;
+use std::fmt::Display;
 
 pub struct Task10;
 
@@ -33,20 +33,24 @@ impl Task10 {
 }
 
 impl TaskRun for Task10 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let grid = Grid::<u32>::from_str_by(input, |c| c.to_digit(10).unwrap_or(99));
-        grid.items_with_points()
+        Ok(grid.items_with_points()
             .filter(|(_, item)| **item == 0)
-            .map(|(point, _)| Self::find_paths(&grid, point).iter().collect::<HashSet<_>>().len())
-            .sum::<usize>()
+            .map(|(point, _)| {
+                Self::find_paths(&grid, point)
+                    .iter()
+                    .collect::<HashSet<_>>()
+                    .len()
+            })
+            .sum::<usize>())
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let grid = Grid::<u32>::from_str_by(input, |c| c.to_digit(10).unwrap_or(99));
-        grid.items_with_points()
+        Ok(grid.items_with_points()
             .filter(|(_, item)| **item == 0)
             .map(|(point, _)| Self::find_paths(&grid, point).len())
-            .sum::<usize>()
+            .sum::<usize>())
     }
 }
-

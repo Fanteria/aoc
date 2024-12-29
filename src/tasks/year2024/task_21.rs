@@ -1,10 +1,10 @@
-use std::{collections::HashMap, iter};
-use std::fmt::Display;
-
 use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Path},
 };
+use anyhow::Result;
+use std::fmt::Display;
+use std::{collections::HashMap, iter};
 
 pub struct Task21;
 
@@ -167,17 +167,17 @@ fn get_sequences_len_sum(input: &str, depth: usize) -> usize {
 }
 
 impl TaskRun for Task21 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        get_sequences_len_sum(input, 1)
+        Ok(get_sequences_len_sum(input, 1))
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        get_sequences_len_sum(input, 24)
+        Ok(get_sequences_len_sum(input, 24))
     }
 }

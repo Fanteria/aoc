@@ -1,6 +1,7 @@
 use crate::tasks::TaskRun;
 use crate::utils::Parser;
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
+use anyhow::Result;
 use std::fmt::Display;
 use std::{cmp::Ordering, fmt::Debug, hash::Hash, str::FromStr};
 
@@ -22,9 +23,9 @@ impl Task05 {
 }
 
 impl TaskRun for Task05 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let (rules, pages_list) = Self::read::<usize>(input);
-        pages_list
+        Ok(pages_list
             .filter_map(|pages| {
                 if pages.is_sorted_by(|from, to| rules.get(from).is_some_and(|i| i.contains(to))) {
                     Some(pages[pages.len() / 2])
@@ -32,12 +33,12 @@ impl TaskRun for Task05 {
                     None
                 }
             })
-            .sum::<usize>()
+            .sum::<usize>())
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let (rules, pages_list) = Self::read::<usize>(input);
-        pages_list
+        Ok(pages_list
             .filter_map(|mut pages| {
                 if !pages.is_sorted_by(|from, to| rules.get(from).is_some_and(|i| i.contains(to))) {
                     pages.sort_by(|from, to| {
@@ -52,6 +53,6 @@ impl TaskRun for Task05 {
                     None
                 }
             })
-            .sum::<usize>()
+            .sum::<usize>())
     }
 }

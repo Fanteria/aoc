@@ -1,6 +1,7 @@
 use crate::tasks::TaskRun;
-use std::fmt::Display;
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
+use anyhow::Result;
+use std::fmt::Display;
 
 pub struct Task23;
 
@@ -48,12 +49,12 @@ fn bron_kerbosch2<'a>(
 }
 
 impl TaskRun for Task23 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
         let (nodes, edges) = read_graph(input);
-        nodes
+        Ok(nodes
             .into_iter()
             .filter(|n| n.starts_with("t"))
             .flat_map(|n| {
@@ -71,10 +72,10 @@ impl TaskRun for Task23 {
                     .collect::<Vec<_>>()
             })
             .collect::<HashSet<_>>()
-            .len()
+            .len())
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -91,6 +92,6 @@ impl TaskRun for Task23 {
 
         let mut clique: Vec<_> = max_cliques.into_iter().collect();
         clique.sort();
-        clique.join(",")
+        Ok(clique.join(","))
     }
 }

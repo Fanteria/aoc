@@ -1,5 +1,6 @@
 use crate::tasks::TaskRun;
 use ahash::AHashMap as HashMap;
+use anyhow::Result;
 use itertools::Itertools;
 use std::fmt::Display;
 
@@ -106,22 +107,22 @@ impl<'a> From<&'a str> for Wiring<'a> {
 }
 
 impl TaskRun for Task24 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
         let wiring = Wiring::from(input);
-        wiring
+        Ok(wiring
             .wiring
             .iter()
             .filter_map(|(k, _)| if let Id::Z(_) = k { Some(k) } else { None })
             .sorted()
             .enumerate()
             .map(|(index, id)| if wiring.get(id) { 1 << index } else { 0 })
-            .sum::<usize>()
+            .sum::<usize>())
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -133,7 +134,7 @@ impl TaskRun for Task24 {
             .max()
             .unwrap();
 
-        wiring
+        Ok(wiring
             .wiring
             .iter()
             .filter_map(|(wire, expression)| match (wire, expression) {
@@ -165,6 +166,6 @@ impl TaskRun for Task24 {
                 _ => None,
             })
             .sorted()
-            .join(",")
+            .join(","))
     }
 }

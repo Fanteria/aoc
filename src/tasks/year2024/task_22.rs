@@ -1,5 +1,6 @@
 use itertools::Itertools;
 use std::fmt::Display;
+use anyhow::Result;
 use rayon::iter::*;
 
 use crate::tasks::TaskRun;
@@ -15,29 +16,29 @@ fn next_secret(mut secret: usize) -> usize {
 }
 
 impl TaskRun for Task22 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        input
+        Ok(input
             .lines()
             .par_bridge()
             .map(|line| line.parse::<usize>().unwrap())
             .map(|secret| (0..2000).fold(secret, |act_secret, _| next_secret(act_secret)))
-            .sum::<usize>()
+            .sum::<usize>())
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        let mut map = [0; 19_usize.pow(4)];
+        let mut map = [0; 130_000];
 
         input
             .lines()
             .map(|line| line.parse::<i32>().unwrap())
             .for_each(|mut secret| {
-                let mut seen = [false; 19_usize.pow(4)];
+                let mut seen = [false; 130_000];
                 let mut deltas = vec![];
                 let mut price = secret % 10;
 
@@ -60,7 +61,7 @@ impl TaskRun for Task22 {
                 });
             });
 
-        map.into_iter().max().unwrap() as usize
+        Ok(map.into_iter().max().unwrap() as usize)
     }
 }
 

@@ -3,8 +3,8 @@ use crate::{
     utils::grid::{Direction, Grid, Point},
 };
 use ahash::AHashSet as HashSet;
-use std::fmt::Display;
-use std::{ops::AddAssign, str::FromStr};
+use anyhow::Result;
+use std::{fmt::Display, ops::AddAssign, str::FromStr};
 
 pub struct Task12;
 
@@ -97,17 +97,19 @@ where
 }
 
 impl TaskRun for Task12 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let grid = Grid::<char>::from_str(input).unwrap();
-        walkthrough_gardens::<Garden>(&grid, &|garden, _| garden.fence += 1)
-            .iter()
-            .map(|g| g.fence * g.area.len())
-            .sum::<usize>()
+        Ok(
+            walkthrough_gardens::<Garden>(&grid, &|garden, _| garden.fence += 1)
+                .iter()
+                .map(|g| g.fence * g.area.len())
+                .sum::<usize>(),
+        )
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let grid = Grid::<char>::from_str(input).unwrap();
-        walkthrough_gardens::<GardenFenceDisard>(&grid, &|garden, point| {
+        Ok(walkthrough_gardens::<GardenFenceDisard>(&grid, &|garden, point| {
             garden.points.insert(point.clone());
         })
         .iter()
@@ -144,7 +146,7 @@ impl TaskRun for Task12 {
             });
             count * g.points.len()
         })
-        .sum::<usize>()
+        .sum::<usize>())
     }
 }
 

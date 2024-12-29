@@ -1,4 +1,5 @@
 use crate::tasks::TaskRun;
+use anyhow::{Context, Result};
 use std::fmt::Display;
 
 pub struct Task17;
@@ -74,17 +75,17 @@ fn run(registers: &mut Registers, program: &[u8]) -> Vec<u8> {
 }
 
 impl TaskRun for Task17 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
         let (mut registers, program) = read(input);
-        run(&mut registers, &program)
+        Ok(run(&mut registers, &program)
             .into_iter()
-            .fold(0_usize, |acc, num| (10 * acc) + num as usize)
+            .fold(0_usize, |acc, num| (10 * acc) + num as usize))
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -108,7 +109,7 @@ impl TaskRun for Task17 {
                 .collect();
         });
 
-        res.into_iter().min().unwrap()
+        res.into_iter().min().context("Initial value not found")
     }
 }
 

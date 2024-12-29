@@ -1,8 +1,9 @@
+use crate::{tasks::TaskRun, utils::Parser};
 use ahash::AHashMap as HashMap;
+use anyhow::Result;
 use itertools::Itertools;
 use std::fmt::Display;
 
-use crate::{tasks::TaskRun, utils::Parser};
 pub struct Task19;
 
 #[derive(Default)]
@@ -83,7 +84,7 @@ fn possible_design(towels: &HashMap<char, Vec<String>>, design: &str) -> bool {
 }
 
 impl TaskRun for Task19 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -95,14 +96,14 @@ impl TaskRun for Task19 {
                 .or_default()
                 .push(towel)
         });
-        designs
+        Ok(designs
             .lines()
             .filter(|design| possible_design(&towels, design))
             // .map(|design| println!("{design}"))
-            .count()
+            .count())
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -112,9 +113,9 @@ impl TaskRun for Task19 {
                 .collect::<Vec<_>>()
                 .as_slice(),
         );
-        designs
+        Ok(designs
             .lines()
             .map(|design| trie.count_possible_designs(design.chars().collect_vec().as_slice()))
-            .sum::<usize>()
+            .sum::<usize>())
     }
 }

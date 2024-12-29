@@ -1,4 +1,5 @@
 use crate::tasks::TaskRun;
+use anyhow::Result;
 use std::{cmp::Ordering, fmt::Display, str::FromStr};
 
 pub struct Task14;
@@ -141,13 +142,13 @@ impl Display for Area {
 }
 
 impl TaskRun for Task14 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let mut area = Area::read_area(input);
         area.move_roborts(100);
-        area.robots_in_quadrants().iter().product::<usize>()
+        Ok(area.robots_in_quadrants().iter().product::<usize>())
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let mut area = Area::read_area(input);
         let variances = (0..std::cmp::max(area.height, area.width))
             .map(|i| {
@@ -187,7 +188,7 @@ impl TaskRun for Task14 {
         // area.move_roborts(seconds as u32 + 1);
         // println!("{area}");
 
-        seconds as usize + 1
+        Ok(seconds as usize + 1)
     }
 }
 

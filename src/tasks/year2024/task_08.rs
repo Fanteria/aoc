@@ -1,9 +1,11 @@
-use crate::tasks::TaskRun;
-use std::fmt::Display;
-use crate::utils::grid::{Grid, Path, Point};
+use crate::{
+    tasks::TaskRun,
+    utils::grid::{Grid, Path, Point},
+};
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
+use anyhow::Result;
 use itertools::Itertools;
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 pub struct Task08;
 
@@ -22,9 +24,9 @@ impl Task08 {
 }
 
 impl TaskRun for Task08 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let (grid, anthennas) = Self::read(input);
-        anthennas
+        Ok(anthennas
             .into_iter()
             .flat_map(|(_, points)| {
                 points.into_iter().permutations(2).filter_map(|pair| {
@@ -33,12 +35,12 @@ impl TaskRun for Task08 {
                 })
             })
             .collect::<HashSet<_>>()
-            .len()
+            .len())
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let (grid, anthennas) = Self::read(input);
-        anthennas
+        Ok(anthennas
             .into_iter()
             .flat_map(|(_, points)| {
                 points.into_iter().permutations(2).map(|mut antinodes| {
@@ -51,6 +53,6 @@ impl TaskRun for Task08 {
             })
             .flatten()
             .collect::<HashSet<_>>()
-            .len()
+            .len())
     }
 }

@@ -1,4 +1,5 @@
 use crate::{tasks::TaskRun, utils::Parser};
+use anyhow::Result;
 use std::fmt::Display;
 
 pub struct Task02;
@@ -19,19 +20,19 @@ impl Task02 {
 }
 
 impl TaskRun for Task02 {
-    fn normal(input: &str) -> impl Display {
-        Parser::iter_vec::<usize>(input)
+    fn normal(input: &str) -> Result<impl Display> {
+        Ok(Parser::iter_vec::<usize>(input)
             .filter(|record| Self::is_valid(record))
-            .count()
+            .count())
     }
 
-    fn bonus(input: &str) -> impl Display {
-        Parser::iter_vec::<usize>(input)
+    fn bonus(input: &str) -> Result<impl Display> {
+        Ok(Parser::iter_vec::<usize>(input)
             .filter(|record| {
                 Self::is_valid(record)
                     || ((0..record.len())
                         .any(|i| Self::is_valid(&[&record[..i], &record[i + 1..]].concat())))
             })
-            .count()
+            .count())
     }
 }

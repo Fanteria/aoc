@@ -1,5 +1,5 @@
 use std::{fmt::Display, str::FromStr};
-
+use anyhow::Result;
 use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Grid, Point},
@@ -171,7 +171,7 @@ fn robot_walkthrough(
 }
 
 impl TaskRun for Task15 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -193,10 +193,10 @@ impl TaskRun for Task15 {
 
         let (mut grid, moves) = read(input);
         robot_walkthrough(&mut grid, moves, move_boxes);
-        gps(grid)
+        Ok(gps(grid))
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -225,6 +225,6 @@ impl TaskRun for Task15 {
                 false
             }
         });
-        gps(grid)
+        Ok(gps(grid))
     }
 }

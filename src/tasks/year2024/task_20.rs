@@ -1,11 +1,12 @@
 use ahash::AHashMap as HashMap;
+use anyhow::Result;
 use rayon::iter::*;
 use std::{fmt::Display, str::FromStr};
-
 use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Grid, Point},
 };
+
 pub struct Task20;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -100,17 +101,17 @@ fn count_cheats(grid: &Grid<Tile>, max_cheat_time: i32) -> usize {
 }
 
 impl TaskRun for Task20 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        count_cheats(&Grid::<Tile>::from_str(input).unwrap(), 2)
+        Ok(count_cheats(&Grid::<Tile>::from_str(input).unwrap(), 2))
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        count_cheats(&Grid::<Tile>::from_str(input).unwrap(), 20)
+        Ok(count_cheats(&Grid::<Tile>::from_str(input).unwrap(), 20))
     }
 }

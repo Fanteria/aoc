@@ -1,13 +1,13 @@
-use std::{collections::VecDeque, fmt::Display};
-
-use crate::utils::grid::Direction;
 use crate::{
     tasks::TaskRun,
+    utils::grid::Direction,
     utils::{
         grid::{Grid, Point},
         Parser,
     },
 };
+use anyhow::{Context, Result};
+use std::{collections::VecDeque, fmt::Display};
 
 pub struct Task18;
 
@@ -53,7 +53,7 @@ fn find_path(mut grid: Grid<Tail>, start: Point) -> Option<usize> {
 }
 
 impl TaskRun for Task18 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -68,10 +68,10 @@ impl TaskRun for Task18 {
                 *grid.get_mut(coord[1], coord[0]).unwrap() = Tail::FallByte;
             });
         let start = Point::new(GRID_SIZE, GRID_SIZE, &grid).unwrap();
-        find_path(grid, start).unwrap()
+        find_path(grid, start).context("Path not found")
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -106,6 +106,6 @@ impl TaskRun for Task18 {
                 break;
             }
         }
-        fall_bytes[min_index][0] * 100 + fall_bytes[min_index][1]
+        Ok(fall_bytes[min_index][0] * 100 + fall_bytes[min_index][1])
     }
 }

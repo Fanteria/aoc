@@ -1,6 +1,7 @@
 use crate::tasks::TaskRun;
-use std::fmt::Display;
+use anyhow::Result;
 use rayon::prelude::*;
+use std::fmt::Display;
 
 pub struct Task07;
 
@@ -20,7 +21,7 @@ impl Task07 {
 }
 
 impl TaskRun for Task07 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         fn evaluate(numbers: &[usize], act: usize, index: usize, expected: usize) -> bool {
             if index == numbers.len() {
                 act == expected
@@ -31,7 +32,7 @@ impl TaskRun for Task07 {
             }
         }
 
-        Self::read(input)
+        Ok(Self::read(input)
             .par_bridge()
             .filter_map(|(result, numbers)| {
                 if evaluate(numbers.as_slice(), numbers[0], 1, result) {
@@ -40,10 +41,10 @@ impl TaskRun for Task07 {
                     None
                 }
             })
-            .sum::<usize>()
+            .sum::<usize>())
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         fn evaluate(numbers: &[usize], act: usize, index: usize, expected: usize) -> bool {
             if index == numbers.len() {
                 act == expected
@@ -62,7 +63,7 @@ impl TaskRun for Task07 {
             }
         }
 
-        Self::read(input)
+        Ok(Self::read(input)
             .par_bridge()
             .filter_map(|(result, numbers)| {
                 if evaluate(numbers.as_slice(), numbers[0], 1, result) {
@@ -71,6 +72,6 @@ impl TaskRun for Task07 {
                     None
                 }
             })
-            .sum::<usize>()
+            .sum::<usize>())
     }
 }

@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::fmt::Display;
 
 use crate::tasks::TaskRun;
@@ -19,25 +20,27 @@ impl Task01 {
 }
 
 impl TaskRun for Task01 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let (mut left, mut right) = Self::read_lines(input);
         left.sort();
         right.sort();
-        left.iter()
+        Ok(left
+            .iter()
             .zip(right.iter())
             .map(|(l, r)| l.abs_diff(*r))
-            .sum::<usize>()
+            .sum::<usize>())
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let (left, right) = Self::read_lines(input);
         let mut map: HashMap<usize, usize> = HashMap::new();
         right.into_iter().for_each(|item| {
             *map.entry(item).or_insert(0) += 1;
         });
-        left.into_iter()
+        Ok(left
+            .into_iter()
             .filter_map(|num| Some(map.get(&num)? * num))
-            .sum::<usize>()
+            .sum::<usize>())
     }
 }
 

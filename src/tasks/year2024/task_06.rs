@@ -1,7 +1,8 @@
 use crate::tasks::TaskRun;
 use crate::utils::grid::{Direction, Grid, Point};
-use rayon::prelude::*;
 use ahash::AHashMap as HashMap;
+use anyhow::Result;
+use rayon::prelude::*;
 use std::{fmt::Display, str::FromStr};
 
 #[derive(PartialEq, Eq, Clone, Copy)]
@@ -78,7 +79,7 @@ impl Task06 {
                     };
                     direction = direction.clockwise(2)
                 }
-                _ =>point = next_point, 
+                _ => point = next_point,
             };
         }
         false
@@ -86,21 +87,22 @@ impl Task06 {
 }
 
 impl TaskRun for Task06 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let grid = Grid::<PointState>::from_str(input).unwrap();
-        Self::guard_travel(grid)
+        Ok(Self::guard_travel(grid)
             .items()
             .filter(|item| **item == PointState::Visited)
-            .count()
+            .count())
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let grid = Grid::<PointState>::from_str(input).unwrap();
         let start = grid.find(&PointState::Visited).unwrap();
         let mut grid = Self::guard_travel(grid);
         *grid.get_at_mut(&start) = PointState::Empty;
 
-        grid.items_with_points()
+        Ok(grid
+            .items_with_points()
             .filter(|(_, item)| **item == PointState::Visited)
             .par_bridge()
             .filter(|(point, _)| {
@@ -108,6 +110,6 @@ impl TaskRun for Task06 {
                 *grid.get_at_mut(point) = PointState::Barrier;
                 Self::is_cycle(&grid, start.clone())
             })
-            .count()
+            .count())
     }
 }

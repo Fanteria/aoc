@@ -1,25 +1,25 @@
 use ahash::AHashMap as HashMap;
+use anyhow::Result;
 use std::fmt::Display;
-
 use crate::{tasks::TaskRun, utils::Parser};
 
 pub struct Task11;
 
 impl TaskRun for Task11 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let stones = Parser::iter_vec::<u64>(input).take(1).next().unwrap();
-        stones
+        Ok(stones
             .into_iter()
             .map(|stone| calculate_lengths(stone, 25))
-            .sum::<usize>()
+            .sum::<usize>())
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let stones = Parser::iter_vec::<u64>(input).take(1).next().unwrap();
-        stones
+        Ok(stones
             .into_iter()
             .map(|stone| calculate_lengths(stone, 75))
-            .sum::<usize>()
+            .sum::<usize>())
     }
 }
 

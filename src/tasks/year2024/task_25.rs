@@ -1,11 +1,12 @@
 use crate::tasks::TaskRun;
+use anyhow::Result;
 use std::fmt::Display;
 use itertools::Itertools;
 
 pub struct Task25;
 
 impl TaskRun for Task25 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -29,20 +30,20 @@ impl TaskRun for Task25 {
         });
         keys.sort();
         locks.sort();
-        locks
+        Ok(locks
             .iter()
             .map(|lock| {
                 keys.iter()
                     .filter(|key| (0..lock.len()).all(|i| lock[i] + key[i] < 6))
                     .count()
             })
-            .sum::<usize>()
+            .sum::<usize>())
     }
 
-    fn bonus(_input: &str) -> impl Display
+    fn bonus(_input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        ""
+        Ok("")
     }
 }

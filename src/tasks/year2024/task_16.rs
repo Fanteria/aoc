@@ -1,12 +1,12 @@
+use crate::{
+    tasks::TaskRun,
+    utils::grid::{Direction, Grid, Point},
+};
+use anyhow::Result;
 use std::{
     collections::{HashMap, HashSet, VecDeque},
     fmt::Display,
     str::FromStr,
-};
-
-use crate::{
-    tasks::TaskRun,
-    utils::grid::{Direction, Grid, Point},
 };
 
 pub struct Task16;
@@ -93,7 +93,7 @@ impl Position {
 }
 
 impl TaskRun for Task16 {
-    fn normal(input: &str) -> impl Display
+    fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -132,10 +132,10 @@ impl TaskRun for Task16 {
                 }
             }));
         }
-        solution as usize
+        Ok(solution)
     }
 
-    fn bonus(input: &str) -> impl Display
+    fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
@@ -182,6 +182,6 @@ impl TaskRun for Task16 {
         //     *g.get_at_mut(point) = Cell::Start;
         // }
         // println!("{g}");
-        tiles.len() + 1
+        Ok(tiles.len() + 1)
     }
 }

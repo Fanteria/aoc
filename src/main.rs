@@ -3,6 +3,7 @@ use aoc::{
     tasks::{Task, TaskType},
 };
 use clap::Parser;
+use anyhow::Result;
 
 #[derive(Parser, Debug)]
 struct Args {
@@ -38,13 +39,14 @@ impl Args {
     }
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = Args::parse();
     let (from, to) = args.get_task_range();
 
     if args.measure_time {
         mesure_tasks(from, to);
     } else {
-        run_tasks(from, to);
+        run_tasks(from, to)?;
     }
+    Ok(())
 }

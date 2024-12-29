@@ -1,4 +1,5 @@
 use crate::tasks::TaskRun;
+use anyhow::Result;
 use itertools::Itertools;
 use std::fmt::Display;
 
@@ -74,44 +75,48 @@ impl Task04 {
 }
 
 impl TaskRun for Task04 {
-    fn normal(input: &str) -> impl Display {
+    fn normal(input: &str) -> Result<impl Display> {
         let d = Task04::read(input);
 
-        Itertools::cartesian_product(0..d.data.len(), 0..d.data[0].len())
-            .flat_map(|(x, y)| {
-                [
-                    d.check_horizonal(x, y),
-                    d.check_vertical(x, y),
-                    d.check_diagonal_right(x, y),
-                    d.check_diagonal_left(x, y),
-                ]
-            })
-            .filter(|v| v.is_some())
-            .count()
+        Ok(
+            Itertools::cartesian_product(0..d.data.len(), 0..d.data[0].len())
+                .flat_map(|(x, y)| {
+                    [
+                        d.check_horizonal(x, y),
+                        d.check_vertical(x, y),
+                        d.check_diagonal_right(x, y),
+                        d.check_diagonal_left(x, y),
+                    ]
+                })
+                .filter(|v| v.is_some())
+                .count(),
+        )
     }
 
-    fn bonus(input: &str) -> impl Display {
+    fn bonus(input: &str) -> Result<impl Display> {
         let d = Task04::read(input);
-        Itertools::cartesian_product(1..d.data.len() - 1, 1..d.data[0].len() - 1)
-            .filter(|(x, y)| d.data[*x].chars().nth(*y).unwrap() == 'A')
-            .filter(|(x, y)| {
-                matches!(
-                    (
-                        d.data[*x + 1].chars().nth(*y + 1).unwrap(),
-                        d.data[*x - 1].chars().nth(*y - 1).unwrap(),
-                    ),
-                    ('M', 'S') | ('S', 'M')
-                )
-            })
-            .filter(|(x, y)| {
-                matches!(
-                    (
-                        d.data[x + 1].chars().nth(*y - 1).unwrap(),
-                        d.data[x - 1].chars().nth(*y + 1).unwrap(),
-                    ),
-                    ('M', 'S') | ('S', 'M')
-                )
-            })
-            .count()
+        Ok(
+            Itertools::cartesian_product(1..d.data.len() - 1, 1..d.data[0].len() - 1)
+                .filter(|(x, y)| d.data[*x].chars().nth(*y).unwrap() == 'A')
+                .filter(|(x, y)| {
+                    matches!(
+                        (
+                            d.data[*x + 1].chars().nth(*y + 1).unwrap(),
+                            d.data[*x - 1].chars().nth(*y - 1).unwrap(),
+                        ),
+                        ('M', 'S') | ('S', 'M')
+                    )
+                })
+                .filter(|(x, y)| {
+                    matches!(
+                        (
+                            d.data[x + 1].chars().nth(*y - 1).unwrap(),
+                            d.data[x - 1].chars().nth(*y + 1).unwrap(),
+                        ),
+                        ('M', 'S') | ('S', 'M')
+                    )
+                })
+                .count(),
+        )
     }
 }
