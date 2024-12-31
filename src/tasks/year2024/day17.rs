@@ -1,8 +1,8 @@
 use crate::tasks::TaskRun;
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Result};
 use std::fmt::Display;
 
-pub struct Task17;
+pub struct Day17;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 struct Registers {
@@ -27,25 +27,31 @@ impl Registers {
     }
 }
 
-fn read(input: &str) -> (Registers, Vec<u8>) {
-    let (registers, program) = input.split_once("\n\n").unwrap();
-    let mut registers = registers
+fn read(input: &str) -> Result<(Registers, Vec<u8>)> {
+    let (registers, program) = input.split_once("\n\n").context("Cannot split to parts")?;
+    let registers = registers
         .lines()
-        .map(|line| line["Register X: ".len()..].trim().parse().unwrap());
-    (
+        .map(|line| {
+            line["Register X: ".len()..]
+                .trim()
+                .parse::<usize>()
+                .context("Cannot parse register")
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok((
         Registers {
-            a: registers.next().unwrap(),
-            b: registers.next().unwrap(),
-            c: registers.next().unwrap(),
+            a: registers[0],
+            b: registers[1],
+            c: registers[2],
         },
         program
             .strip_prefix("Program: ")
-            .unwrap()
+            .with_context(|| anyhow!("Wrong program prefix: {}", program))?
             .trim()
             .split(',')
-            .map(|c| c.parse::<u8>().unwrap())
-            .collect::<Vec<_>>(),
-    )
+            .map(|c| c.parse::<u8>())
+            .collect::<std::result::Result<_, _>>()?,
+    ))
 }
 
 fn run(registers: &mut Registers, program: &[u8]) -> Vec<u8> {
@@ -74,12 +80,12 @@ fn run(registers: &mut Registers, program: &[u8]) -> Vec<u8> {
     output
 }
 
-impl TaskRun for Task17 {
+impl TaskRun for Day17 {
     fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        let (mut registers, program) = read(input);
+        let (mut registers, program) = read(input)?;
         Ok(run(&mut registers, &program)
             .into_iter()
             .fold(0_usize, |acc, num| (10 * acc) + num as usize))
@@ -89,7 +95,7 @@ impl TaskRun for Task17 {
     where
         Self: Sized,
     {
-        let (regs, prog) = read(input);
+        let (regs, prog) = read(input)?;
         let mut res = Vec::new();
         let mut inputs = (0..8).collect::<Vec<_>>();
         (0..prog.len()).for_each(|i| {

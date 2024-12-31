@@ -1,9 +1,9 @@
 use crate::tasks::TaskRun;
 use crate::utils::grid::{Direction, Grid, Point};
 use ahash::AHashMap as HashMap;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use rayon::prelude::*;
-use std::{fmt::Display, str::FromStr};
+use std::fmt::Display;
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum PointState {
@@ -37,12 +37,14 @@ impl Display for PointState {
     }
 }
 
-pub struct Task06;
+pub struct Day06;
 
-impl Task06 {
-    fn guard_travel(mut grid: Grid<PointState>) -> Grid<PointState> {
+impl Day06 {
+    fn guard_travel(mut grid: Grid<PointState>) -> Result<Grid<PointState>> {
         let mut direction = Direction::Up;
-        let mut point = grid.find(&PointState::Visited).unwrap();
+        let mut point = grid
+            .find(&PointState::Visited)
+            .context("Start position missing")?;
 
         while let Some(next_point) = point.adjacent(direction, &grid) {
             match grid.get_at(&next_point) {
@@ -54,7 +56,7 @@ impl Task06 {
                 PointState::Visited => point = next_point,
             };
         }
-        grid
+        Ok(grid)
     }
 
     fn is_cycle(grid: &Grid<PointState>, start: Point) -> bool {
@@ -86,19 +88,21 @@ impl Task06 {
     }
 }
 
-impl TaskRun for Task06 {
+impl TaskRun for Day06 {
     fn normal(input: &str) -> Result<impl Display> {
-        let grid = Grid::<PointState>::from_str(input).unwrap();
-        Ok(Self::guard_travel(grid)
+        let grid = Grid::<PointState>::from(input);
+        Ok(Self::guard_travel(grid)?
             .items()
             .filter(|item| **item == PointState::Visited)
             .count())
     }
 
     fn bonus(input: &str) -> Result<impl Display> {
-        let grid = Grid::<PointState>::from_str(input).unwrap();
-        let start = grid.find(&PointState::Visited).unwrap();
-        let mut grid = Self::guard_travel(grid);
+        let grid = Grid::<PointState>::from(input);
+        let start = grid
+            .find(&PointState::Visited)
+            .context("Start position missing")?;
+        let mut grid = Self::guard_travel(grid)?;
         *grid.get_at_mut(&start) = PointState::Empty;
 
         Ok(grid
@@ -108,7 +112,7 @@ impl TaskRun for Task06 {
             .filter(|(point, _)| {
                 let mut grid = grid.clone();
                 *grid.get_at_mut(point) = PointState::Barrier;
-                Self::is_cycle(&grid, start.clone())
+                Self::is_cycle(&grid, start)
             })
             .count())
     }

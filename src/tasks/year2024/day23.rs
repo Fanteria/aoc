@@ -1,24 +1,29 @@
 use crate::tasks::TaskRun;
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
-use anyhow::Result;
+use anyhow::{Context, Result};
+use itertools::Itertools;
 use std::fmt::Display;
 
-pub struct Task23;
+pub struct Day23;
 
-fn read_graph(input: &str) -> (HashSet<&str>, HashMap<&str, HashSet<&str>>) {
+#[derive(Default)]
+struct Graph<'a> {
+    nodes: HashSet<&'a str>,
+    edges: HashMap<&'a str, HashSet<&'a str>>,
+}
+
+fn read_graph(input: &str) -> Result<Graph> {
     input
         .lines()
-        .map(|line| line.split_once("-").unwrap())
-        .fold(
-            (HashSet::new(), HashMap::new()),
-            |(mut nodes, mut edges), (from, to)| {
-                nodes.insert(from);
-                nodes.insert(to);
-                edges.entry(from).or_default().insert(to);
-                edges.entry(to).or_default().insert(from);
-                (nodes, edges)
-            },
-        )
+        .map(|line| line.split_once("-").context("Missing split character '-'"))
+        .try_fold(Graph::default(), |mut g, splitted| {
+            let (from, to) = splitted?;
+            g.nodes.insert(from);
+            g.nodes.insert(to);
+            g.edges.entry(from).or_default().insert(to);
+            g.edges.entry(to).or_default().insert(from);
+            Ok::<_, anyhow::Error>(g)
+        })
 }
 
 fn bron_kerbosch2<'a>(
@@ -48,12 +53,12 @@ fn bron_kerbosch2<'a>(
     }
 }
 
-impl TaskRun for Task23 {
+impl TaskRun for Day23 {
     fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        let (nodes, edges) = read_graph(input);
+        let Graph { nodes, edges } = read_graph(input)?;
         Ok(nodes
             .into_iter()
             .filter(|n| n.starts_with("t"))
@@ -79,7 +84,7 @@ impl TaskRun for Task23 {
     where
         Self: Sized,
     {
-        let (nodes, edges) = read_graph(input);
+        let Graph { nodes, edges } = read_graph(input)?;
         let mut max_cliques = HashSet::new();
 
         bron_kerbosch2(
@@ -90,8 +95,6 @@ impl TaskRun for Task23 {
             &mut max_cliques,
         );
 
-        let mut clique: Vec<_> = max_cliques.into_iter().collect();
-        clique.sort();
-        Ok(clique.join(","))
+        Ok(max_cliques.into_iter().sorted().join(","))
     }
 }

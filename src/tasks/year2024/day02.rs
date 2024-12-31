@@ -2,9 +2,9 @@ use crate::{tasks::TaskRun, utils::Parser};
 use anyhow::Result;
 use std::fmt::Display;
 
-pub struct Task02;
+pub struct Day02;
 
-impl Task02 {
+impl Day02 {
     fn is_cending<'a, I>(iter: I) -> bool
     where
         I: Iterator<Item = &'a usize> + Clone,
@@ -19,7 +19,7 @@ impl Task02 {
     }
 }
 
-impl TaskRun for Task02 {
+impl TaskRun for Day02 {
     fn normal(input: &str) -> Result<impl Display> {
         Ok(Parser::iter_vec::<usize>(input)
             .filter(|record| Self::is_valid(record))

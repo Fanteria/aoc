@@ -1,8 +1,8 @@
 use crate::tasks::TaskRun;
-use anyhow::Result;
+use anyhow::{anyhow, Context, Result};
 use std::{cmp::Ordering, fmt::Display, str::FromStr};
 
-pub struct Task14;
+pub struct Day14;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 struct Position {
@@ -38,19 +38,26 @@ struct Robot {
 }
 
 impl FromStr for Robot {
-    type Err = u32; // TODO some meaninful
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (pos, vec) = s.split_once(' ').unwrap();
-        let (y, x) = pos.strip_prefix("p=").unwrap().split_once(',').unwrap();
+        fn split<'a>(pair: &'a str, prefix: &str) -> Result<(&'a str, &'a str)> {
+            pair.strip_prefix(prefix)
+                .and_then(|v| v.split_once(','))
+                .context("Cannot split values.")
+        }
+        let (pos, vec) = s
+            .split_once(' ')
+            .with_context(|| anyhow!("Should contain position and vector: {}", s))?;
+        let (y, x) = split(pos, "p=")?;
         let position = Position {
-            x: x.parse().unwrap(),
-            y: y.parse().unwrap(),
+            x: x.parse()?,
+            y: y.parse()?,
         };
-        let (y, x) = vec.strip_prefix("v=").unwrap().split_once(',').unwrap();
+        let (y, x) = split(vec, "v=")?;
         let vector = Vector {
-            x: x.parse().unwrap(),
-            y: y.parse().unwrap(),
+            x: x.parse()?,
+            y: y.parse()?,
         };
         Ok(Robot { position, vector })
     }
@@ -86,15 +93,12 @@ impl Area {
             })
     }
 
-    fn read_area(input: &str) -> Self {
-        Area {
+    fn read_area(input: &str) -> Result<Self> {
+        Ok(Area {
             width: 101,
             height: 103,
-            robots: input
-                .lines()
-                .map(|line| Robot::from_str(line).unwrap())
-                .collect(),
-        }
+            robots: input.lines().map(Robot::from_str).collect::<Result<_>>()?,
+        })
     }
 
     fn variances(&self) -> (f64, f64) {
@@ -141,15 +145,15 @@ impl Display for Area {
     }
 }
 
-impl TaskRun for Task14 {
+impl TaskRun for Day14 {
     fn normal(input: &str) -> Result<impl Display> {
-        let mut area = Area::read_area(input);
+        let mut area = Area::read_area(input)?;
         area.move_roborts(100);
         Ok(area.robots_in_quadrants().iter().product::<usize>())
     }
 
     fn bonus(input: &str) -> Result<impl Display> {
-        let mut area = Area::read_area(input);
+        let mut area = Area::read_area(input)?;
         let variances = (0..std::cmp::max(area.height, area.width))
             .map(|i| {
                 area.move_roborts(1);
@@ -197,14 +201,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parsing() {
+    fn parsing() -> Result<()> {
         assert_eq!(
             Robot {
                 position: Position { x: 4, y: 2 },
                 vector: Vector { x: -3, y: 2 },
             },
-            Robot::from_str("p=2,4 v=2,-3").unwrap()
+            Robot::from_str("p=2,4 v=2,-3")?
         );
+        Ok(())
     }
 
     #[test]

@@ -1,8 +1,8 @@
 mod year2024;
 
+use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use std::fmt::Display;
-use anyhow::Result;
 
 trait TaskRun: Sync {
     fn normal(input: &str) -> Result<impl Display>

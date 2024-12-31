@@ -1,13 +1,13 @@
-use ahash::AHashMap as HashMap;
-use anyhow::Result;
-use rayon::iter::*;
-use std::{fmt::Display, str::FromStr};
 use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Grid, Point},
 };
+use ahash::AHashMap as HashMap;
+use anyhow::{Context, Result};
+use rayon::iter::*;
+use std::fmt::Display;
 
-pub struct Task20;
+pub struct Day20;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum Tile {
@@ -44,11 +44,11 @@ impl Display for Tile {
     }
 }
 
-fn get_path(grid: &Grid<Tile>) -> HashMap<Point, usize> {
+fn get_path(grid: &Grid<Tile>) -> Result<HashMap<Point, usize>> {
     let mut visited: HashMap<Point, usize> = HashMap::new();
-    let mut last = grid.find(&Tile::Start).unwrap();
+    let mut last = grid.find(&Tile::Start).context("Cannot find start")?;
     let mut i = 0;
-    visited.insert(last.clone(), i);
+    visited.insert(last, i);
     loop {
         if *grid.get_at(&last) == Tile::End {
             break;
@@ -62,11 +62,10 @@ fn get_path(grid: &Grid<Tile>) -> HashMap<Point, usize> {
                 (*grid.get_at(point) == Tile::Track || *grid.get_at(point) == Tile::End)
                     && !visited.contains_key(point)
             })
-            .collect::<Vec<_>>()[0]
-            .clone();
-        visited.insert(last.clone(), i);
+            .collect::<Vec<_>>()[0];
+        visited.insert(last, i);
     }
-    visited
+    Ok(visited)
 }
 
 fn possible_cheats<'a>(
@@ -82,9 +81,10 @@ fn possible_cheats<'a>(
     })
 }
 
-fn count_cheats(grid: &Grid<Tile>, max_cheat_time: i32) -> usize {
-    let path = get_path(grid);
-    path.par_iter()
+fn count_cheats(grid: &Grid<Tile>, max_cheat_time: i32) -> Result<usize> {
+    let path = get_path(grid)?;
+    Ok(path
+        .par_iter()
         .map(|(start, from_start)| {
             possible_cheats(grid, start, max_cheat_time)
                 // TODO write this filter some more readable way...
@@ -97,21 +97,21 @@ fn count_cheats(grid: &Grid<Tile>, max_cheat_time: i32) -> usize {
                 })
                 .count()
         })
-        .sum()
+        .sum())
 }
 
-impl TaskRun for Task20 {
+impl TaskRun for Day20 {
     fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        Ok(count_cheats(&Grid::<Tile>::from_str(input).unwrap(), 2))
+        count_cheats(&Grid::<Tile>::from(input), 2)
     }
 
     fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        Ok(count_cheats(&Grid::<Tile>::from_str(input).unwrap(), 20))
+        count_cheats(&Grid::<Tile>::from(input), 20)
     }
 }

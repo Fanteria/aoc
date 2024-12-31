@@ -1,9 +1,9 @@
+use anyhow::Result;
 use aoc::{
-    mesure_tasks, run_tasks,
+    run_tasks,
     tasks::{Task, TaskType},
 };
 use clap::Parser;
-use anyhow::Result;
 
 #[derive(Parser, Debug)]
 struct Args {
@@ -19,9 +19,6 @@ struct Args {
 
     /// The ending task type
     to_task_type: Option<TaskType>,
-
-    #[arg(short, long)]
-    measure_time: bool,
 }
 
 impl Args {
@@ -42,11 +39,5 @@ impl Args {
 fn main() -> Result<()> {
     let args = Args::parse();
     let (from, to) = args.get_task_range();
-
-    if args.measure_time {
-        mesure_tasks(from, to);
-    } else {
-        run_tasks(from, to)?;
-    }
-    Ok(())
+    run_tasks(from, to)
 }

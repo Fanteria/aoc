@@ -4,9 +4,9 @@ use crate::{
 };
 use ahash::AHashSet as HashSet;
 use anyhow::Result;
-use std::{fmt::Display, ops::AddAssign, str::FromStr};
+use std::{fmt::Display, ops::AddAssign};
 
-pub struct Task12;
+pub struct Day12;
 
 #[derive(Debug, PartialEq, Eq)]
 struct Garden {
@@ -78,8 +78,8 @@ fn dfs<G>(
 where
     G: From<Point> + AddAssign,
 {
-    visited.insert(point.clone());
-    let mut garden = G::from(point.clone());
+    visited.insert(*point);
+    let mut garden = G::from(*point);
     (0..8)
         .step_by(2)
         .for_each(|i| match point.adjacent(Direction::Up.clockwise(i), grid) {
@@ -96,9 +96,9 @@ where
     garden
 }
 
-impl TaskRun for Task12 {
+impl TaskRun for Day12 {
     fn normal(input: &str) -> Result<impl Display> {
-        let grid = Grid::<char>::from_str(input).unwrap();
+        let grid = Grid::<char>::from(input);
         Ok(
             walkthrough_gardens::<Garden>(&grid, &|garden, _| garden.fence += 1)
                 .iter()
@@ -108,45 +108,48 @@ impl TaskRun for Task12 {
     }
 
     fn bonus(input: &str) -> Result<impl Display> {
-        let grid = Grid::<char>::from_str(input).unwrap();
-        Ok(walkthrough_gardens::<GardenFenceDisard>(&grid, &|garden, point| {
-            garden.points.insert(point.clone());
-        })
-        .iter()
-        .map(|g| {
-            let mut count = 0;
-            g.points.iter().for_each(|point| {
-                Direction::Up.iter().step_by(2).for_each(|direction| {
-                    // check outer corners
-                    if !match (
-                        point.adjacent(direction, &grid),
-                        point.adjacent(direction.clockwise(2), &grid),
-                    ) {
-                        (Some(p), _) if g.points.contains(&p) => false,
-                        (_, Some(p)) if g.points.contains(&p) => false,
-                        _ => {
-                            count += 1;
-                            true
-                        }
-                    } {
-                        // check inner corners
-                        match (
+        let grid = Grid::<char>::from(input);
+        Ok(
+            walkthrough_gardens::<GardenFenceDisard>(&grid, &|garden, point| {
+                garden.points.insert(*point);
+            })
+            .iter()
+            .map(|g| {
+                let mut count = 0;
+                g.points.iter().for_each(|point| {
+                    Direction::Up.iter().step_by(2).for_each(|direction| {
+                        // check outer corners
+                        if !match (
                             point.adjacent(direction, &grid),
-                            point.adjacent(direction.clockwise(1), &grid),
+                            point.adjacent(direction.clockwise(2), &grid),
                         ) {
-                            (Some(base), Some(diagonal))
-                                if !g.points.contains(&base) && g.points.contains(&diagonal) =>
-                            {
+                            (Some(p), _) if g.points.contains(&p) => false,
+                            (_, Some(p)) if g.points.contains(&p) => false,
+                            _ => {
                                 count += 1;
+                                true
                             }
-                            _ => {}
+                        } {
+                            // check inner corners
+                            match (
+                                point.adjacent(direction, &grid),
+                                point.adjacent(direction.clockwise(1), &grid),
+                            ) {
+                                (Some(base), Some(diagonal))
+                                    if !g.points.contains(&base)
+                                        && g.points.contains(&diagonal) =>
+                                {
+                                    count += 1;
+                                }
+                                _ => {}
+                            }
                         }
-                    }
-                })
-            });
-            count * g.points.len()
-        })
-        .sum::<usize>())
+                    })
+                });
+                count * g.points.len()
+            })
+            .sum::<usize>(),
+        )
     }
 }
 
@@ -158,7 +161,7 @@ mod tests {
     fn dfs_test() {
         const INPUT1: &str = "AABB\nAABB";
         let mut visited: HashSet<Point> = HashSet::new();
-        let grid = Grid::<char>::from_str(INPUT1).unwrap();
+        let grid = Grid::<char>::from(INPUT1);
         let point = Point::new(0, 0, &grid).unwrap();
         let garden = dfs::<Garden>(&point, &grid, &mut visited, &|garden, _| garden.fence += 1);
         assert_eq!(garden.area.len(), 4);
@@ -166,7 +169,7 @@ mod tests {
 
         const INPUT2: &str = "AAAA\nBBCC";
         let mut visited: HashSet<Point> = HashSet::new();
-        let grid = Grid::<char>::from_str(INPUT2).unwrap();
+        let grid = Grid::<char>::from(INPUT2);
         let point = Point::new(0, 0, &grid).unwrap();
         let garden = dfs::<Garden>(&point, &grid, &mut visited, &|garden, _| garden.fence += 1);
         assert_eq!(garden.area.len(), 4);

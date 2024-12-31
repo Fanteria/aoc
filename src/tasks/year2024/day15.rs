@@ -1,11 +1,11 @@
-use std::{fmt::Display, str::FromStr};
-use anyhow::Result;
 use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Grid, Point},
 };
+use anyhow::{Context, Result};
+use std::fmt::Display;
 
-pub struct Task15;
+pub struct Day15;
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum PlaceBox {
@@ -65,10 +65,10 @@ impl Display for Place {
     }
 }
 
-fn read(input: &str) -> (Grid<Place>, Vec<Direction>) {
-    let (grid, moves) = input.split_once("\n\n").unwrap();
-    (
-        Grid::<Place>::from_str(grid).unwrap(),
+fn read(input: &str) -> Result<(Grid<Place>, Vec<Direction>)> {
+    let (grid, moves) = input.split_once("\n\n").context("Cannot read input")?;
+    Ok((
+        Grid::<Place>::from(grid),
         moves
             .lines()
             .flat_map(|line| line.chars())
@@ -80,7 +80,7 @@ fn read(input: &str) -> (Grid<Place>, Vec<Direction>) {
                 _ => unreachable!(),
             })
             .collect(),
-    )
+    ))
 }
 
 fn gps(grid: Grid<Place>) -> usize {
@@ -143,8 +143,8 @@ fn robot_walkthrough(
     grid: &mut Grid<Place>,
     moves: Vec<Direction>,
     move_boxes: impl Fn(&Point, Direction, &mut Grid<Place>) -> bool,
-) {
-    let mut robot = grid.find(&Place::Robot).unwrap();
+) -> Result<()> {
+    let mut robot = grid.find(&Place::Robot).context("Cannot find robot starting position")?;
     moves.into_iter().for_each(|direction| {
         let next = robot.adjacent(direction, grid).unwrap();
         match grid.get_at(&next) {
@@ -168,9 +168,10 @@ fn robot_walkthrough(
         // std::thread::sleep(std::time::Duration::from_millis(300));
         // println!("{grid}");
     });
+    Ok(())
 }
 
-impl TaskRun for Task15 {
+impl TaskRun for Day15 {
     fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
@@ -191,8 +192,8 @@ impl TaskRun for Task15 {
             }
         }
 
-        let (mut grid, moves) = read(input);
-        robot_walkthrough(&mut grid, moves, move_boxes);
+        let (mut grid, moves) = read(input)?;
+        robot_walkthrough(&mut grid, moves, move_boxes)?;
         Ok(gps(grid))
     }
 
@@ -200,7 +201,7 @@ impl TaskRun for Task15 {
     where
         Self: Sized,
     {
-        let (grid, moves) = read(input);
+        let (grid, moves) = read(input)?;
         let width = grid.get_width();
         let mut grid = Grid::<Place>::new(
             grid.consume_data()
@@ -224,7 +225,7 @@ impl TaskRun for Task15 {
             } else {
                 false
             }
-        });
+        })?;
         Ok(gps(grid))
     }
 }

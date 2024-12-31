@@ -5,13 +5,13 @@ use crate::{
 use ahash::{AHashMap as HashMap, AHashSet as HashSet};
 use anyhow::Result;
 use itertools::Itertools;
-use std::{fmt::Display, str::FromStr};
+use std::fmt::Display;
 
-pub struct Task08;
+pub struct Day08;
 
-impl Task08 {
+impl Day08 {
     fn read(input: &str) -> (Grid<char>, HashMap<char, HashSet<Point>>) {
-        let grid = Grid::<char>::from_str(input).unwrap();
+        let grid = Grid::<char>::from(input);
         let mut anthennas: HashMap<char, HashSet<Point>> = HashMap::new();
         grid.items_with_points()
             .filter(|(_, c)| **c != '.')
@@ -23,7 +23,7 @@ impl Task08 {
     }
 }
 
-impl TaskRun for Task08 {
+impl TaskRun for Day08 {
     fn normal(input: &str) -> Result<impl Display> {
         let (grid, anthennas) = Self::read(input);
         Ok(anthennas

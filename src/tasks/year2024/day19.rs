@@ -4,7 +4,7 @@ use anyhow::Result;
 use itertools::Itertools;
 use std::fmt::Display;
 
-pub struct Task19;
+pub struct Day19;
 
 #[derive(Default)]
 struct Trie {
@@ -83,7 +83,7 @@ fn possible_design(towels: &HashMap<char, Vec<String>>, design: &str) -> bool {
     }
 }
 
-impl TaskRun for Task19 {
+impl TaskRun for Day19 {
     fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,

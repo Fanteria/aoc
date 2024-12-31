@@ -1,8 +1,8 @@
 use crate::tasks::TaskRun;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use std::{fmt::Display, iter};
 
-pub struct Task09;
+pub struct Day09;
 
 #[derive(Debug, Clone)]
 pub struct Disk {
@@ -50,21 +50,31 @@ struct Space {
     start_index: usize,
 }
 
-impl Task09 {
-    fn normal_read(input: &str) -> Vec<Option<usize>> {
+impl Day09 {
+    fn base_read(input: &str) -> Result<Vec<usize>> {
         input
             .trim()
             .chars()
-            .map(|c| c.to_digit(10).unwrap())
+            .map(|c| {
+                c.to_digit(10)
+                    .map(|n| n as usize)
+                    .ok_or_else(|| anyhow!("'{}' is not digit", c))
+            })
+            .collect()
+    }
+
+    fn normal_read(input: &str) -> Result<Vec<Option<usize>>> {
+        Ok(Self::base_read(input)?
+            .into_iter()
             .enumerate()
             .flat_map(|(i, num)| {
                 if i % 2 == 0 {
-                    iter::repeat(Some(i / 2)).take(num as usize)
+                    iter::repeat(Some(i / 2)).take(num)
                 } else {
-                    iter::repeat(None).take(num as usize)
+                    iter::repeat(None).take(num)
                 }
             })
-            .collect()
+            .collect())
     }
 
     fn normal_sort(mut vec: Vec<Option<usize>>) -> Vec<Option<usize>> {
@@ -83,14 +93,12 @@ impl Task09 {
         vec
     }
 
-    fn bonus_read(input: &str) -> Disk {
+    fn bonus_read(input: &str) -> Result<Disk> {
         let mut spaces = std::array::from_fn(|_| Vec::new());
         let mut blocks = Vec::new();
         let mut start_index = 0;
-        input
-            .trim()
-            .chars()
-            .map(|c| c.to_digit(10).unwrap() as usize)
+        Self::base_read(input)?
+            .into_iter()
             .enumerate()
             .for_each(|(i, size)| {
                 if i % 2 == 0 {
@@ -104,7 +112,7 @@ impl Task09 {
                 };
                 start_index += size;
             });
-        Disk { blocks, spaces }
+        Ok(Disk { blocks, spaces })
     }
 
     fn bonus_sort(mut disk: Disk) -> Disk {
@@ -150,16 +158,16 @@ impl Task09 {
     }
 }
 
-impl TaskRun for Task09 {
+impl TaskRun for Day09 {
     fn normal(input: &str) -> Result<impl Display> {
         Ok(Self::check_sum(
-            &Self::normal_sort(Self::normal_read(input)),
+            &Self::normal_sort(Self::normal_read(input)?),
             |num| num,
         ))
     }
 
     fn bonus(input: &str) -> Result<impl Display> {
-        Ok(Self::bonus_sort(Self::bonus_read(input))
+        Ok(Self::bonus_sort(Self::bonus_read(input)?)
             .blocks
             .iter()
             .map(|b| {
@@ -185,12 +193,14 @@ mod tests {
     }
 
     #[test]
-    fn normal() {
+    fn normal() -> Result<()> {
         let s = |v| to_string(v, |num| num);
-        assert_eq!(&s(Task09::normal_read("12321")), "0..111..2");
+        assert_eq!(&s(Day09::normal_read("12321")?), "0..111..2");
         assert_eq!(
-            &s(Task09::normal_sort(Task09::normal_read("12321"))),
+            &s(Day09::normal_sort(Day09::normal_read("12321")?)),
             "02111...."
         );
+
+        Ok(())
     }
 }

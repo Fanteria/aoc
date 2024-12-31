@@ -5,9 +5,9 @@ use crate::tasks::TaskRun;
 use crate::utils::Parser;
 use ahash::AHashMap as HashMap;
 
-pub struct Task01;
+pub struct Day01;
 
-impl Task01 {
+impl Day01 {
     fn read_lines(input: &str) -> (Vec<usize>, Vec<usize>) {
         let mut left: Vec<usize> = Vec::new();
         let mut right: Vec<usize> = Vec::new();
@@ -19,7 +19,7 @@ impl Task01 {
     }
 }
 
-impl TaskRun for Task01 {
+impl TaskRun for Day01 {
     fn normal(input: &str) -> Result<impl Display> {
         let (mut left, mut right) = Self::read_lines(input);
         left.sort();
@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn read_lines() {
-        let (left, right) = Task01::read_lines(EXAMPLE);
+        let (left, right) = Day01::read_lines(EXAMPLE);
         assert_eq!(left, vec![3, 4, 2, 1, 3, 3]);
         assert_eq!(right, vec![4, 3, 5, 3, 9, 3]);
     }

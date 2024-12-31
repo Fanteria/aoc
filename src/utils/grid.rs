@@ -7,7 +7,7 @@ pub use path::Path;
 pub use point::Point;
 
 use point::new_point;
-use std::{fmt::Display, str::FromStr};
+use std::fmt::Display;
 
 #[derive(Clone)]
 pub struct Grid<T> {
@@ -153,14 +153,11 @@ where
     }
 }
 
-impl<T> FromStr for Grid<T>
+impl<T> From<&str> for Grid<T>
 where
     T: From<char>,
 {
-    // TODO use error
-    type Err = i32;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Self::from_str_by(s, |c| c.into()))
+    fn from(s: &str) -> Self {
+        Self::from_str_by(s, |c| c.into())
     }
 }

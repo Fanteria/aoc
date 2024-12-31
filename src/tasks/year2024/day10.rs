@@ -6,9 +6,9 @@ use anyhow::Result;
 use std::collections::HashSet;
 use std::fmt::Display;
 
-pub struct Task10;
+pub struct Day10;
 
-impl Task10 {
+impl Day10 {
     fn find_paths(grid: &Grid<u32>, start: Point) -> Vec<Point> {
         let mut stack = vec![start];
         let mut ret = Vec::new();
@@ -32,7 +32,7 @@ impl Task10 {
     }
 }
 
-impl TaskRun for Task10 {
+impl TaskRun for Day10 {
     fn normal(input: &str) -> Result<impl Display> {
         let grid = Grid::<u32>::from_str_by(input, |c| c.to_digit(10).unwrap_or(99));
         Ok(grid.items_with_points()

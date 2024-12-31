@@ -1,7 +1,7 @@
+use crate::tasks::Task;
+use anyhow::{Context, Result};
 use core::panic;
 use std::{env, fmt::Display, fs::File, io::Read, path::PathBuf};
-
-use crate::tasks::Task;
 
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
@@ -75,17 +75,19 @@ impl Files {
         ret.trim().to_string()
     }
 
-    pub fn get_input(&self, file_type: FilesType, task: &Task) -> String {
+    pub fn get_input(&self, file_type: FilesType, task: &Task) -> Result<String> {
         let path = self.get_file(file_type, FileIO::In, task);
-        let mut file = File::open(&path)
-            .unwrap_or_else(|e| panic!("Failed to open file {:?}. Error: {e}", path));
+        let mut file =
+            File::open(&path).with_context(|| format!("Failed to open file {:?}", path))?;
         let mut ret = String::new();
         file.read_to_string(&mut ret)
-            .unwrap_or_else(|e| panic!("Failed to read fiel {:?}. Error: {e}", path));
-        ret
+            .with_context(|| format!("Failed to read fiel {:?}", path))?;
+        Ok(ret)
     }
 
-    pub fn from_env() -> Self {
-        Self::new(PathBuf::from(env::var("AOC_DATA").unwrap()))
+    pub fn from_env() -> Result<Self> {
+        Ok(Self::new(PathBuf::from(
+            env::var("AOC_DATA").context("Env variable AOC_DATA must be set.")?,
+        )))
     }
 }

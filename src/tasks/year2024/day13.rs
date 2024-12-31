@@ -1,8 +1,9 @@
 use crate::tasks::TaskRun;
-use anyhow::Result;
+use anyhow::{anyhow, Context, Result};
+use itertools::Itertools;
 use std::{fmt::Display, str::FromStr};
 
-pub struct Task13;
+pub struct Day13;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Button {
@@ -11,17 +12,17 @@ pub struct Button {
 }
 
 impl FromStr for Button {
-    type Err = u32; // TODO some meaningful
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let button = s
             .get("Button A: X+".len()..)
-            .unwrap()
+            .with_context(|| format!("Cannot get prefix from '{}'", s))?
             .split_once(", Y+")
-            .unwrap();
+            .with_context(|| format!("Cannot split to X and Y '{}'", s))?;
         Ok(Button {
-            x: button.0.parse().unwrap(),
-            y: button.1.parse().unwrap(),
+            x: button.0.parse()?,
+            y: button.1.parse()?,
         })
     }
 }
@@ -62,48 +63,53 @@ impl Automat {
 }
 
 impl FromStr for Automat {
-    type Err = i32; // TOD some meaningful
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut lines = s.lines();
-        let a = Button::from_str(lines.next().unwrap()).unwrap();
-        let b = Button::from_str(lines.next().unwrap()).unwrap();
-        let price = lines
-            .next()
-            .unwrap()
+        let lines: [&str; 3] = s
+            .lines()
+            .collect::<Vec<_>>()
+            .try_into()
+            .map_err(|e| anyhow!("Cannot convert {:?} to automat.", e))?;
+        let (x, y) = lines[2]
             .strip_prefix("Prize: X=")
-            .unwrap()
+            .with_context(|| format!("Prize preffix is wrong '{}'", lines[2]))?
             .split_once(", Y=")
-            .unwrap();
+            .with_context(|| format!("Cannot split X and Y of price '{}'", lines[2]))?;
         Ok(Self {
-            a,
-            b,
-            x: price.0.parse().unwrap(),
-            y: price.1.parse().unwrap(),
+            a: Button::from_str(lines[0])?,
+            b: Button::from_str(lines[1])?,
+            x: x.parse()?,
+            y: y.parse()?,
         })
     }
 }
 
-impl TaskRun for Task13 {
+impl TaskRun for Day13 {
     fn normal(input: &str) -> Result<impl Display> {
-        Ok(input
+        input
             .split("\n\n")
-            .filter_map(|s| Automat::from_str(s).unwrap().solve())
-            .map(|solution| solution.a as usize * 3 + solution.b as usize)
-            .sum::<usize>())
+            .map(Automat::from_str)
+            .process_results(|it| {
+                it.filter_map(|automat| automat.solve())
+                    .map(|solution| solution.a as usize * 3 + solution.b as usize)
+                    .sum::<usize>()
+            })
     }
 
     fn bonus(input: &str) -> Result<impl Display> {
-        Ok(input
+        input
             .split("\n\n")
-            .filter_map(|s| {
-                let mut automat = Automat::from_str(s).unwrap();
-                automat.x += 10_000_000_000_000;
-                automat.y += 10_000_000_000_000;
-                automat.solve()
+            .map(Automat::from_str)
+            .process_results(|it| {
+                it.filter_map(|mut automat| {
+                    automat.x += 10_000_000_000_000;
+                    automat.y += 10_000_000_000_000;
+                    automat.solve()
+                })
+                .map(|solution| solution.a as usize * 3 + solution.b as usize)
+                .sum::<usize>()
             })
-            .map(|solution| solution.a as usize * 3 + solution.b as usize)
-            .sum::<usize>())
     }
 }
 

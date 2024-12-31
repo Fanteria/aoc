@@ -64,9 +64,9 @@ impl Data {
     }
 }
 
-pub struct Task04;
+pub struct Day04;
 
-impl Task04 {
+impl Day04 {
     fn read(input: &str) -> Data {
         Data {
             data: input.lines().map(|l| l.to_owned()).collect(),
@@ -74,9 +74,9 @@ impl Task04 {
     }
 }
 
-impl TaskRun for Task04 {
+impl TaskRun for Day04 {
     fn normal(input: &str) -> Result<impl Display> {
-        let d = Task04::read(input);
+        let d = Day04::read(input);
 
         Ok(
             Itertools::cartesian_product(0..d.data.len(), 0..d.data[0].len())
@@ -94,7 +94,7 @@ impl TaskRun for Task04 {
     }
 
     fn bonus(input: &str) -> Result<impl Display> {
-        let d = Task04::read(input);
+        let d = Day04::read(input);
         Ok(
             Itertools::cartesian_product(1..d.data.len() - 1, 1..d.data[0].len() - 1)
                 .filter(|(x, y)| d.data[*x].chars().nth(*y).unwrap() == 'A')

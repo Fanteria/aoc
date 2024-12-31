@@ -3,6 +3,15 @@ use std::{fmt::Debug, str::FromStr};
 pub struct Parser;
 
 impl Parser {
+    pub fn line_vec<T>(line: &str) -> std::result::Result<Vec<T>, <T as FromStr>::Err>
+    where
+        T: FromStr,
+    {
+        line.split_whitespace()
+            .map(|num| T::from_str(num))
+            .collect()
+    }
+
     #[inline]
     pub fn iter_vec<T>(lines: &str) -> impl Iterator<Item = Vec<T>> + '_
     where

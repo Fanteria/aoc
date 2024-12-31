@@ -3,9 +3,9 @@ use anyhow::Result;
 use std::fmt::Display;
 use itertools::Itertools;
 
-pub struct Task25;
+pub struct Day25;
 
-impl TaskRun for Task25 {
+impl TaskRun for Day25 {
     fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,

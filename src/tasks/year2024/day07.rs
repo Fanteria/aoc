@@ -1,26 +1,29 @@
 use crate::tasks::TaskRun;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use rayon::prelude::*;
-use std::fmt::Display;
+use std::{fmt::Display, num::ParseIntError};
 
-pub struct Task07;
+pub struct Day07;
 
-impl Task07 {
-    fn read(input: &str) -> impl Iterator<Item = (usize, Vec<usize>)> + '_ {
-        input.lines().map(|line| {
-            let (left, right) = line.split_once(':').unwrap();
-            (
-                left.parse().unwrap(),
+impl Day07 {
+    fn read(input: &str) -> Result<Vec<(usize, Vec<usize>)>> {
+        fn read_line(line: &str) -> Result<(usize, Vec<usize>)> {
+            let (left, right) = line
+                .split_once(':')
+                .ok_or_else(|| anyhow!("Cannot split against ':'"))?;
+            Ok((
+                left.parse()?,
                 right
                     .split_whitespace()
-                    .map(|num| num.parse().unwrap())
-                    .collect::<Vec<_>>(),
-            )
-        })
+                    .map(|num| num.parse())
+                    .collect::<std::result::Result<Vec<_>, ParseIntError>>()?,
+            ))
+        }
+        input.lines().map(read_line).collect()
     }
 }
 
-impl TaskRun for Task07 {
+impl TaskRun for Day07 {
     fn normal(input: &str) -> Result<impl Display> {
         fn evaluate(numbers: &[usize], act: usize, index: usize, expected: usize) -> bool {
             if index == numbers.len() {
@@ -32,10 +35,10 @@ impl TaskRun for Task07 {
             }
         }
 
-        Ok(Self::read(input)
-            .par_bridge()
+        Ok(Self::read(input)?
+            .par_iter()
             .filter_map(|(result, numbers)| {
-                if evaluate(numbers.as_slice(), numbers[0], 1, result) {
+                if evaluate(numbers.as_slice(), numbers[0], 1, *result) {
                     Some(result)
                 } else {
                     None
@@ -63,10 +66,10 @@ impl TaskRun for Task07 {
             }
         }
 
-        Ok(Self::read(input)
-            .par_bridge()
+        Ok(Self::read(input)?
+            .par_iter()
             .filter_map(|(result, numbers)| {
-                if evaluate(numbers.as_slice(), numbers[0], 1, result) {
+                if evaluate(numbers.as_slice(), numbers[0], 1, *result) {
                     Some(result)
                 } else {
                     None

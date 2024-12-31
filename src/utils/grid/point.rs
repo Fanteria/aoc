@@ -5,7 +5,7 @@ pub fn new_point(x: usize, y: usize) -> Point {
     Point { x, y }
 }
 
-#[derive(Debug, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct Point {
     x: usize,
     y: usize,

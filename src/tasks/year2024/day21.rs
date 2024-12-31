@@ -2,11 +2,11 @@ use crate::{
     tasks::TaskRun,
     utils::grid::{Direction, Path},
 };
-use anyhow::Result;
+use anyhow::{Context, Result};
 use std::fmt::Display;
 use std::{collections::HashMap, iter};
 
-pub struct Task21;
+pub struct Day21;
 
 const BUTTON_POSSITIONS: [Path; 11] = [
     Path::new(1, 3),
@@ -42,18 +42,25 @@ fn get_move(delta: i64, negative: Direction, positive: Direction) -> Vec<RobotMo
 struct Code<'a>(&'a str);
 
 impl<'a> Code<'a> {
-    fn get_num(&self) -> usize {
-        self.0.strip_suffix("A").unwrap().parse::<usize>().unwrap()
+    fn get_num(&self) -> Result<usize> {
+        Ok(self
+            .0
+            .strip_suffix("A")
+            .context("Wrong suffix")?
+            .parse::<usize>()?)
     }
 
-    fn digits(&self) -> Vec<u32> {
-        self.0.chars().map(|c| c.to_digit(16).unwrap()).collect()
+    fn digits(&self) -> Result<Vec<u32>> {
+        self.0
+            .chars()
+            .map(|c| c.to_digit(16).context("Must be a digit"))
+            .collect()
     }
 }
 
-fn keypad_moves(code: Code) -> Vec<RobotMove> {
-    let digits = code.digits();
-    code.digits()
+fn keypad_moves(code: Code) -> Result<Vec<RobotMove>> {
+    let digits = code.digits()?;
+    Ok(digits
         .iter()
         .zip([0x0A].iter().chain(digits.iter()))
         .map(|(act, prev)| {
@@ -78,7 +85,7 @@ fn keypad_moves(code: Code) -> Vec<RobotMove> {
             }
             .chain([RobotMove::Push])
         })
-        .collect()
+        .collect())
 }
 
 fn robot_moves() -> HashMap<(RobotMove, RobotMove), Vec<RobotMove>> {
@@ -146,7 +153,7 @@ fn sequence(
     known[&(p, c, depth)]
 }
 
-fn get_sequences_len_sum(input: &str, depth: usize) -> usize {
+fn get_sequences_len_sum(input: &str, depth: usize) -> Result<usize> {
     let moves = robot_moves();
     let get_sequence_len = |s: &Vec<RobotMove>| -> usize {
         let mut known = moves
@@ -159,25 +166,23 @@ fn get_sequences_len_sum(input: &str, depth: usize) -> usize {
             .sum()
     };
 
-    input
-        .lines()
-        .map(Code)
-        .map(|code| code.get_num() * get_sequence_len(&keypad_moves(code)))
-        .sum()
+    input.lines().map(Code).try_fold(0, |res, code| {
+        Ok::<usize, anyhow::Error>(res + (code.get_num()? * get_sequence_len(&keypad_moves(code)?)))
+    })
 }
 
-impl TaskRun for Task21 {
+impl TaskRun for Day21 {
     fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        Ok(get_sequences_len_sum(input, 1))
+        get_sequences_len_sum(input, 1)
     }
 
     fn bonus(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        Ok(get_sequences_len_sum(input, 24))
+        get_sequences_len_sum(input, 24)
     }
 }

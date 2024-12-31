@@ -5,9 +5,9 @@ use anyhow::Result;
 use std::fmt::Display;
 use std::{cmp::Ordering, fmt::Debug, hash::Hash, str::FromStr};
 
-pub struct Task05;
+pub struct Day05;
 
-impl Task05 {
+impl Day05 {
     fn read<T>(input: &str) -> (HashMap<T, HashSet<T>>, impl Iterator<Item = Vec<T>> + '_)
     where
         T: FromStr + std::cmp::Eq + Hash + Copy,
@@ -22,7 +22,7 @@ impl Task05 {
     }
 }
 
-impl TaskRun for Task05 {
+impl TaskRun for Day05 {
     fn normal(input: &str) -> Result<impl Display> {
         let (rules, pages_list) = Self::read::<usize>(input);
         Ok(pages_list

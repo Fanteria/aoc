@@ -1,10 +1,10 @@
 use crate::tasks::TaskRun;
 use ahash::AHashMap as HashMap;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use itertools::Itertools;
 use std::fmt::Display;
 
-pub struct Task24;
+pub struct Day24;
 
 #[derive(Hash, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum Id<'a> {
@@ -64,54 +64,58 @@ impl<'a> Wiring<'a> {
     }
 }
 
-impl<'a> From<&'a str> for Wiring<'a> {
-    // TODO should be try from
-    fn from(value: &'a str) -> Self {
-        let (initial, expressions) = value.split_once("\n\n").unwrap();
-        Self {
+impl<'a> TryFrom<&'a str> for Wiring<'a> {
+    type Error = anyhow::Error;
+
+    fn try_from(value: &'a str) -> std::result::Result<Self, Self::Error> {
+        let (initial, expressions) = value.split_once("\n\n").context("Cannot split blocks")?;
+        Ok(Self {
             wiring: initial
                 .lines()
                 .map(|line| {
-                    let (key, value) = line.split_once(":").unwrap();
-                    (
+                    let (key, value) =
+                        line.split_once(":").context("Cannot split key and value")?;
+                    Ok::<_, anyhow::Error>((
                         Id::from(key.trim()),
                         match value.trim() {
                             "1" => Expression::Value(true),
                             "0" => Expression::Value(false),
                             _ => unreachable!(),
                         },
-                    )
+                    ))
                 })
-                .chain(expressions.lines().map(|line| {
-                    let (expression, output) = line.split_once(" -> ").unwrap();
-                    let output = Id::from(output);
-                    let items = expression.split_whitespace().collect_vec();
-                    let (left, right) = if items[0] > items[2] {
-                        (Id::from(items[2]), Id::from(items[0]))
-                    } else {
-                        (Id::from(items[0]), Id::from(items[2]))
-                    };
-                    (
-                        output,
-                        match items[1] {
-                            "AND" => Expression::And(left, right),
-                            "OR" => Expression::Or(left, right),
-                            "XOR" => Expression::Xor(left, right),
-                            _ => unreachable!(),
-                        },
-                    )
-                }))
-                .collect(),
-        }
+                .process_results(|it| {
+                    it.chain(expressions.lines().map(|line| {
+                        let (expression, output) = line.split_once(" -> ").unwrap();
+                        let output = Id::from(output);
+                        let items = expression.split_whitespace().collect_vec();
+                        let (left, right) = if items[0] > items[2] {
+                            (Id::from(items[2]), Id::from(items[0]))
+                        } else {
+                            (Id::from(items[0]), Id::from(items[2]))
+                        };
+                        (
+                            output,
+                            match items[1] {
+                                "AND" => Expression::And(left, right),
+                                "OR" => Expression::Or(left, right),
+                                "XOR" => Expression::Xor(left, right),
+                                _ => unreachable!(),
+                            },
+                        )
+                    }))
+                    .collect()
+                })?,
+        })
     }
 }
 
-impl TaskRun for Task24 {
+impl TaskRun for Day24 {
     fn normal(input: &str) -> Result<impl Display>
     where
         Self: Sized,
     {
-        let wiring = Wiring::from(input);
+        let wiring = Wiring::try_from(input)?;
         Ok(wiring
             .wiring
             .iter()
@@ -126,7 +130,7 @@ impl TaskRun for Task24 {
     where
         Self: Sized,
     {
-        let wiring = Wiring::from(input);
+        let wiring = Wiring::try_from(input)?;
         let last_z_bit = wiring
             .wiring
             .keys()
