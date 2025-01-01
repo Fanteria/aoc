@@ -126,26 +126,26 @@ mod tests {
     #[test]
     fn run_program_test() {
         let mut registers = Registers::new(0, 0, 9);
-        assert_eq!(run(&mut registers, &vec![2, 6]), vec![]);
+        assert_eq!(run(&mut registers, &[2, 6]), vec![]);
         assert_eq!(registers, Registers::new(0, 1, 9));
 
         let mut registers = Registers::new(10, 0, 0);
-        assert_eq!(run(&mut registers, &vec![5, 0, 5, 1, 5, 4]), vec![0, 1, 2]);
+        assert_eq!(run(&mut registers, &[5, 0, 5, 1, 5, 4]), vec![0, 1, 2]);
         assert_eq!(registers, Registers::new(10, 0, 0));
 
         let mut registers = Registers::new(2024, 0, 0);
         assert_eq!(
-            run(&mut registers, &vec![0, 1, 5, 4, 3, 0]),
+            run(&mut registers, &[0, 1, 5, 4, 3, 0]),
             vec![4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0]
         );
         assert_eq!(registers, Registers::new(0, 0, 0));
 
         let mut registers = Registers::new(0, 29, 0);
-        assert_eq!(run(&mut registers, &vec![1, 7]), vec![]);
+        assert_eq!(run(&mut registers, &[1, 7]), vec![]);
         assert_eq!(registers, Registers::new(0, 26, 0));
 
         let mut registers = Registers::new(0, 2024, 43690);
-        assert_eq!(run(&mut registers, &vec![4, 0]), vec![]);
+        assert_eq!(run(&mut registers, &[4, 0]), vec![]);
         assert_eq!(registers, Registers::new(0, 44354, 43690));
     }
 }
