@@ -20,6 +20,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-add ~/.ssh/id_rsa
       - name: Clone testing data
         run: git clone git@github.com:Fanteria/aoc-data.git ./data
       - name: Install rust
