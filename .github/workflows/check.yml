@@ -21,8 +21,11 @@ jobs:
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa.pub
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
+      - name: Debug SSH Key
+        run: |
+          ls -lah ~/.ssh
+          file ~/.ssh/id_rsa
+          ssh -vT git@github.com || true
       - name: Clone testing data
         run: git clone git@github.com:Fanteria/aoc-data.git ./data
       - name: Install rust
