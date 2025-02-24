@@ -20,7 +20,7 @@ jobs:
           TESTING: ${{ secrets.TESTING }}
         shell: bash
         run: |
-          echo "$TESTING"
+          echo "Testing: $TESTING"
           mkdir -p ~/.ssh
           echo "$TESTING" > ~/.ssh/id_rsa2
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
