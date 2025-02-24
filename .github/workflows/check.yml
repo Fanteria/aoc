@@ -17,22 +17,11 @@ jobs:
       - name: Set up SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_DATA_PRIVATE_KEY }}
-          TESTING: ${{ secrets.TESTING }}
         shell: bash
         run: |
-          echo "Testing: $TESTING"
           mkdir -p ~/.ssh
-          echo "$TESTING" > ~/.ssh/id_rsa2
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - name: Debug SSH Key
-        run: |
-          ls -lah ~/.ssh
-          file ~/.ssh/id_rsa
-          file ~/.ssh/id_rsa2
-          cat ~/.ssh/id_rsa2
-          ssh -vT git@github.com || true
       - name: Clone testing data
         run: git clone git@github.com:Fanteria/aoc-data.git ./data
       - name: Install rust
