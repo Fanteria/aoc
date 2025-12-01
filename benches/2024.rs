@@ -11,7 +11,7 @@ use aoc::{
 use test::Bencher;
 
 fn prepare(task_num: u8, task_type: TaskType) -> Result<(Task, String)> {
-    let task = Task::new(task_num, task_type);
+    let task = Task::new(task_num, task_type, 2024);
     let input = Files::from_env()?.get_input(FilesType::Task, &task)?;
     Ok((task, input))
 }

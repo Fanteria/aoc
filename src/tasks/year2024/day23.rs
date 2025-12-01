@@ -12,7 +12,7 @@ struct Graph<'a> {
     edges: HashMap<&'a str, HashSet<&'a str>>,
 }
 
-fn read_graph(input: &str) -> Result<Graph> {
+fn read_graph(input: &str) -> Result<Graph<'_>> {
     input
         .lines()
         .map(|line| line.split_once("-").context("Missing split character '-'"))

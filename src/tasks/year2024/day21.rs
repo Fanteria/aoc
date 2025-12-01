@@ -4,7 +4,7 @@ use crate::{
 };
 use anyhow::{Context, Result};
 use std::fmt::Display;
-use std::{collections::HashMap, iter};
+use std::collections::HashMap;
 
 pub struct Day21;
 
@@ -34,9 +34,7 @@ fn get_move(delta: i64, negative: Direction, positive: Direction) -> Vec<RobotMo
         delta if delta < 0 => negative,
         _ => return vec![],
     };
-    iter::repeat(RobotMove::Move(direction))
-        .take(delta.unsigned_abs() as usize)
-        .collect()
+    std::iter::repeat_n(RobotMove::Move(direction), delta.unsigned_abs() as usize).collect()
 }
 
 struct Code<'a>(&'a str);

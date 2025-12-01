@@ -36,7 +36,7 @@ impl Direction {
         CLOCKWISE[((CLOCKWISE.len() / 2) + *self as usize) % CLOCKWISE.len()]
     }
 
-    pub const fn iter(&self) -> DirectionIter {
+    pub const fn iter(&self) -> DirectionIter<'_> {
         DirectionIter {
             direction: self,
             shift: 0,

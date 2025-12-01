@@ -26,7 +26,7 @@ fn blink(num: u64) -> (u64, Option<u64>) {
         return (1, None);
     }
     let len = (num as f64).log10() as usize + 1;
-    if len % 2 == 0 {
+    if len.is_multiple_of(2) {
         let pow10 = 10_u64.pow(len as u32 / 2);
         (num / pow10, Some(num % pow10))
     } else {
