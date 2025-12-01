@@ -1,4 +1,5 @@
 mod year2024;
+mod year2025;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
@@ -51,7 +52,7 @@ impl Task {
     }
 
     pub fn run(&self, input: &str) -> Result<String> {
-        year2024::run_task(input, self.task_number, self.task_type)
+        year2025::run_task(input, self.task_number, self.task_type)
     }
 
     pub fn next(mut self) -> Self {
