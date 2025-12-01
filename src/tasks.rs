@@ -1,7 +1,7 @@
 mod year2024;
 mod year2025;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::{Parser, ValueEnum};
 use std::fmt::Display;
 
@@ -38,21 +38,26 @@ impl Display for TaskType {
 #[derive(Parser, Clone, Debug, PartialEq, Eq)]
 pub struct Task {
     pub task_number: u8,
-
-    #[arg(default_value_t = TaskType::Normal)]
     pub task_type: TaskType,
+    pub year: u32,
 }
 
 impl Task {
-    pub fn new(task_number: u8, task_type: TaskType) -> Self {
+    pub fn new(task_number: u8, task_type: TaskType, year: u32) -> Self {
         Self {
             task_number,
             task_type,
+            year,
         }
     }
 
     pub fn run(&self, input: &str) -> Result<String> {
-        year2025::run_task(input, self.task_number, self.task_type)
+        match self.year {
+            2015..=2023 => Err(anyhow!("This year is not implemented")),
+            2024 => year2024::run_task(input, self.task_number, self.task_type),
+            2025 => year2025::run_task(input, self.task_number, self.task_type),
+            _ => Err(anyhow!("Invalid year")),
+        }
     }
 
     pub fn next(mut self) -> Self {

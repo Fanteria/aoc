@@ -56,7 +56,10 @@ impl Files {
             FilesType::Task => format!("{io}.txt"),
             FilesType::Example | FilesType::Custom(_) => format!("{file_type}_{io}.txt"),
         };
-        let dir = self.dir.join(format!("{:0>2}", task.task_number));
+        let dir = self
+            .dir
+            .join(task.year.to_string())
+            .join(format!("{:0>2}", task.task_number));
         let file_path = dir.join(format!("{}_{name}", task.task_type));
         if file_path.exists() {
             file_path

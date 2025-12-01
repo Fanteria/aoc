@@ -12,16 +12,16 @@ fn get_io(files: &Files, file_type: FilesType, task: &Task) -> Result<(String, S
 }
 
 #[test]
-fn task_2025_01() -> Result<()> {
+fn task_01() -> Result<()> {
     let f = Files::from_env()?;
 
-    let t = Task::new(1, TaskType::Normal);
+    let t = Task::new(1, TaskType::Normal, 2025);
     let (input, output) = get_io(&f, FilesType::Example, &t)?;
     assert_eq!(t.run(&input)?, output);
     let (input, output) = get_io(&f, FilesType::Task, &t)?;
     assert_eq!(t.run(&input)?, output);
 
-    let t = Task::new(1, TaskType::Bonus);
+    let t = Task::new(1, TaskType::Bonus, 2025);
     let (input, output) = get_io(&f, FilesType::Example, &t)?;
     assert_eq!(t.run(&input)?, output);
     let (input, output) = get_io(&f, FilesType::Task, &t)?;
