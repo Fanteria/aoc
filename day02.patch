@@ -1,0 +1,46 @@
+diff --git a/src/tasks/year2025/mod.rs b/src/tasks/year2025/mod.rs
+index f1ae2f2..d8d7fb7 100644
+--- a/src/tasks/year2025/mod.rs
++++ b/src/tasks/year2025/mod.rs
+@@ -1 +1 @@
+-crate::modules!(01);
++crate::modules!(01, 02);
+diff --git a/src/utils.rs b/src/utils.rs
+index f5e7b3b..242bf6a 100644
+--- a/src/utils.rs
++++ b/src/utils.rs
+@@ -30,3 +30,7 @@ macro_rules! modules {
+ 
+     };
+ }
++
++pub fn number_of_digits(num: impl Into<f64>) -> usize {
++    num.into().log10() as usize + 1
++}
+diff --git a/tests/2025.rs b/tests/2025.rs
+index 92fe115..4dcdadd 100644
+--- a/tests/2025.rs
++++ b/tests/2025.rs
+@@ -29,3 +29,22 @@ fn task_01() -> Result<()> {
+ 
+     Ok(())
+ }
++
++#[test]
++fn task_02() -> Result<()> {
++    let f = Files::from_env()?;
++
++    let t = Task::new(2, TaskType::Normal, 2025);
++    let (input, output) = get_io(&f, FilesType::Example, &t)?;
++    assert_eq!(t.run(&input)?, output);
++    let (input, output) = get_io(&f, FilesType::Task, &t)?;
++    assert_eq!(t.run(&input)?, output);
++
++    let t = Task::new(2, TaskType::Bonus, 2025);
++    let (input, output) = get_io(&f, FilesType::Example, &t)?;
++    assert_eq!(t.run(&input)?, output);
++    // let (input, output) = get_io(&f, FilesType::Task, &t)?;
++    // assert_eq!(t.run(&input)?, output);
++
++    Ok(())
++}

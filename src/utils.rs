@@ -30,3 +30,7 @@ macro_rules! modules {
 
     };
 }
+
+pub fn number_of_digits(num: impl Into<f64>) -> usize {
+    num.into().log10() as usize + 1
+}
