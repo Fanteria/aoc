@@ -48,3 +48,22 @@ fn task_02() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn task_03() -> Result<()> {
+    let f = Files::from_env()?;
+
+    let t = Task::new(3, TaskType::Normal, 2025);
+    let (input, output) = get_io(&f, FilesType::Example, &t)?;
+    assert_eq!(t.run(&input)?, output);
+    let (input, output) = get_io(&f, FilesType::Task, &t)?;
+    assert_eq!(t.run(&input)?, output);
+
+    let t = Task::new(3, TaskType::Bonus, 2025);
+    let (input, output) = get_io(&f, FilesType::Example, &t)?;
+    assert_eq!(t.run(&input)?, output);
+    let (input, output) = get_io(&f, FilesType::Task, &t)?;
+    assert_eq!(t.run(&input)?, output);
+
+    Ok(())
+}
