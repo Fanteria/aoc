@@ -113,9 +113,7 @@ impl TaskRun for Day02 {
         let options = Self::generate_options();
         Ok(Parser::iter_line_sep::<Interval>(input, ",")
             .flat_map(|interval| {
-                let x = Self::find_interval_options(&options, &interval);
-                println!("from: {}, to: {} -> {x:?}", interval.from, interval.to);
-                x
+                Self::find_interval_options(&options, &interval)
             })
             .sum::<u64>())
     }
