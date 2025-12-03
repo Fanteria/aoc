@@ -43,8 +43,8 @@ fn task_02() -> Result<()> {
     let t = Task::new(2, TaskType::Bonus, 2025);
     let (input, output) = get_io(&f, FilesType::Example, &t)?;
     assert_eq!(t.run(&input)?, output);
-    // let (input, output) = get_io(&f, FilesType::Task, &t)?;
-    // assert_eq!(t.run(&input)?, output);
+    let (input, output) = get_io(&f, FilesType::Task, &t)?;
+    assert_eq!(t.run(&input)?, output);
 
     Ok(())
 }

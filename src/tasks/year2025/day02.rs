@@ -8,22 +8,6 @@ use crate::{
 
 pub struct Day02;
 
-// From the same example as before:
-// 
-//     11-22 still has two invalid IDs, 11 and 22.
-//     95-115 now has two invalid IDs, 99 and 111.
-//     998-1012 now has two invalid IDs, 999 and 1010.
-//     1188511880-1188511890 still has one invalid ID, 1188511885.
-//     222220-222224 still has one invalid ID, 222222.
-//     1698522-1698528 still contains no invalid IDs.
-//     446443-446449 still has one invalid ID, 446446.
-//     38593856-38593862 still has one invalid ID, 38593859.
-//     565653-565659 now has one invalid ID, 565656.
-//     824824821-824824827 now has one invalid ID, 824824824.
-//     2121212118-2121212124 now has one invalid ID, 2121212121.
-// 
-// Adding up all the invalid IDs in this example produces 4174379265
-
 struct Interval {
     from: u64,
     to: u64,
@@ -74,24 +58,66 @@ impl Day02 {
             .collect()
     }
 
-    fn generate(from: u64, to: u64) {
+    fn generate_options() -> Vec<u64> {
+        let max_number = 10_000_000_000_u64;
+        let multipliers = [10, 100, 1_000, 10_000, 100_000]
+            .into_iter()
+            .map(|base| {
+                let mut vec = Vec::new();
+                let mut new = 1;
+                loop {
+                    new = new * base + 1;
+                    if new >= max_number {
+                        break;
+                    }
+                    vec.push(new);
+                }
+                vec
+            })
+            .collect::<Vec<_>>();
+        let mut options = (1..99_999_u64)
+            .flat_map(|i| {
+                let nod = number_of_digits(i as u32);
+                multipliers[nod - 1]
+                    .iter()
+                    .map(|multiplier| multiplier * i)
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
+        options.sort();
+        options.dedup();
+        options
+    }
 
+    fn find_interval_options<'a>(options: &'a [u64], interval: &Interval) -> &'a [u64] {
+        let from = match options.binary_search(&interval.from) {
+            Ok(index) => index,
+            Err(index) => index,
+        };
+        let to = match options.binary_search(&interval.to) {
+            Ok(index) => index,
+            Err(index) => index - 1,
+        };
+        &options[from..=to]
     }
 }
 
 impl TaskRun for Day02 {
     fn normal(input: &str) -> Result<impl Display> {
         Ok(Parser::iter_line_sep::<Interval>(input, ",")
-            .flat_map(|Interval { from, to }| {
-                let vec = Self::generate_pairs(from, to);
-                println!("from: {from}, to: {to} = {vec:?}");
-                vec
-            })
+            .flat_map(|Interval { from, to }| Self::generate_pairs(from, to))
             .sum::<u64>())
     }
 
     fn bonus(input: &str) -> Result<impl Display> {
-        Ok("")
+        let options = Self::generate_options();
+        Ok(Parser::iter_line_sep::<Interval>(input, ",")
+            .flat_map(|interval| {
+                let x = Self::find_interval_options(&options, &interval);
+                println!("from: {}, to: {} -> {x:?}", interval.from, interval.to);
+                x
+            })
+            .sum::<u64>())
     }
 }
 
@@ -107,6 +133,27 @@ mod tests {
                 11, 22, 33, 44, 55, 66, 77, 88, 99, 1010, 1111, 1212, 1313, 1414, 1515, 1616, 1717,
                 1818, 1919, 2020
             ]
+        );
+    }
+
+    #[test]
+    fn generate_options_test() {
+        assert_eq!(
+            Day02::generate_options()[..10],
+            vec![11, 22, 33, 44, 55, 66, 77, 88, 99, 111]
+        );
+    }
+
+    #[test]
+    fn find_interval_options_test() {
+        let options = [1, 5, 7, 9, 12, 18];
+        assert_eq!(
+            Day02::find_interval_options(&options, &Interval { from: 6, to: 15 }),
+            [7, 9, 12]
+        );
+        assert_eq!(
+            Day02::find_interval_options(&options, &Interval { from: 7, to: 12 }),
+            [7, 9, 12]
         );
     }
 }
