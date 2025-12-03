@@ -439,7 +439,7 @@ fn task_22() -> Result<()> {
 
     let t = Task::new(22, TaskType::Bonus, 2024);
     std::thread::Builder::new()
-        .stack_size(8 * 1024 * 1024)  // 8 MB it allocate large stack block for performance reasons
+        .stack_size(8 * 1024 * 1024) // 8 MB it allocate large stack block for performance reasons
         .spawn(move || {
             let (input, output) = get_io(&f, FilesType::Example, &t)?;
             assert_eq!(t.run(&input)?, output);
