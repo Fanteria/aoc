@@ -438,10 +438,18 @@ fn task_22() -> Result<()> {
     assert_eq!(t.run(&input)?, output);
 
     let t = Task::new(22, TaskType::Bonus, 2024);
-    let (input, output) = get_io(&f, FilesType::Example, &t)?;
-    assert_eq!(t.run(&input)?, output);
-    let (input, output) = get_io(&f, FilesType::Task, &t)?;
-    assert_eq!(t.run(&input)?, output);
+    std::thread::Builder::new()
+        .stack_size(8 * 1024 * 1024)  // 8 MB it allocate large stack block for performance reasons
+        .spawn(move || {
+            let (input, output) = get_io(&f, FilesType::Example, &t)?;
+            assert_eq!(t.run(&input)?, output);
+            let (input, output) = get_io(&f, FilesType::Task, &t)?;
+            assert_eq!(t.run(&input)?, output);
+            Ok::<(), anyhow::Error>(())
+        })
+        .unwrap()
+        .join()
+        .unwrap()?;
 
     Ok(())
 }
