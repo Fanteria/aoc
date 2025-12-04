@@ -55,6 +55,11 @@ impl<T> Grid<T> {
             .map(|(index, item)| (self.point_from_index(index), item))
     }
 
+    pub fn points(&self) -> impl DoubleEndedIterator<Item = Point> + use<'_, T> {
+        (0..self.height)
+            .flat_map(move |y| (0..self.width).filter_map(move |x| Point::new(x, y, self)))
+    }
+
     pub fn lines(&self) -> impl DoubleEndedIterator<Item = &[T]> {
         (0..self.height).map(|row| {
             let index = row * self.width;
