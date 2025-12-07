@@ -86,20 +86,20 @@ fn day05_bonus(b: &mut Bencher) -> Result<()> {
     Ok(())
 }
 
-// #[bench]
-// fn day06_normal(b: &mut Bencher) -> Result<()> {
-//     let (t, input) = prepare(6, TaskType::Normal)?;
-//     b.iter(|| t.run(&input));
-//     Ok(())
-// }
-//
-// #[bench]
-// fn day06_bonus(b: &mut Bencher) -> Result<()> {
-//     let (t, input) = prepare(6, TaskType::Bonus)?;
-//     b.iter(|| t.run(&input));
-//     Ok(())
-// }
-//
+#[bench]
+fn day06_normal(b: &mut Bencher) -> Result<()> {
+    let (t, input) = prepare(6, TaskType::Normal)?;
+    b.iter(|| t.run(&input));
+    Ok(())
+}
+
+#[bench]
+fn day06_bonus(b: &mut Bencher) -> Result<()> {
+    let (t, input) = prepare(6, TaskType::Bonus)?;
+    b.iter(|| t.run(&input));
+    Ok(())
+}
+
 // #[bench]
 // fn day07_normal(b: &mut Bencher) -> Result<()> {
 //     let (t, input) = prepare(7, TaskType::Normal)?;
