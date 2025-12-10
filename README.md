@@ -13,8 +13,6 @@ Each day's directory contains:
 - `bonus_out.txt` - Part 2 solution output
 - `bonus_example_out.txt` - Expected output for Part 2 example
 
-Some days include multiple examples (e.g., `example_2_in.txt`, `example_3_in.txt`). Or have different examples for normal `normal_example_in.txt` and bonus `bonus_example_in.txt`. Data directories are expected to be in some private repository of only on local storage not in this repository, because they should not be publicly reditributed. For more check [about page](adventofcode.com/2025/about).
-
 Some days include multiple examples (e.g., `example_2_in.txt`, `example_3_in.txt`) or have different examples for normal (`normal_example_in.txt`) and bonus (`bonus_example_in.txt`) puzzles. Data directories are expected to be in a private repository or only on local storage, not in this repository, because they should not be publicly redistributed. For more information, check the [about page](adventofcode.com/2025/about).
 
 ## Usage
