@@ -1,7 +1,10 @@
 pub mod grid;
 mod parser;
+mod graph;
 
 pub use parser::Parser;
+pub use graph::OrientedGraph;
+pub use graph::NodeId;
 
 #[macro_export]
 macro_rules! modules {
