@@ -104,7 +104,6 @@ impl TaskRun for Day12 {
             }
             return Err(anyhow::anyhow!("This situation is too complicated and not needed for my input"));
         }
-        println!("XXX");
         Ok(count)
     }
 
